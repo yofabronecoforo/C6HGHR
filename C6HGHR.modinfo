@@ -1,0 +1,170 @@
+<!--==========================================================================
+	Hostile Goody Hut Rewards (HGHR) for Civilization VI
+    Copyright © 2020-2024 yofabronecoforo
+    All rights reserved.
+
+    Begin modinfo definition
+===========================================================================-->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- increment version element here when changes will break existing saves -->
+<Mod id="eccf6466-03f4-46de-96ba-98fcd1e10b90" version="1">
+    <Properties>
+        <Name>LOC_HGHR_MOD_TITLE</Name>
+        <!-- actual version number reported ingame by ECFE -->
+        <Version>0.1.0</Version>
+        <Teaser>LOC_HGHR_MOD_TEASER</Teaser>
+        <Description>LOC_HGHR_MOD_DESCRIPTION</Description>
+        <Authors>LOC_HGHR_MOD_AUTHORS</Authors>
+        <SpecialThanks>LOC_HGHR_MOD_SPECIALTHANKS</SpecialThanks>
+        <Stability>Beta</Stability>
+        <CompatibleVersions>2.0</CompatibleVersions>
+    </Properties>
+    <References>
+        <Mod id="1B28771A-C749-434B-9053-D1380C553DE9" title="LOC_EXPANSION1_MOD_TITLE"/>
+        <Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="LOC_EXPANSION2_MOD_TITLE"/>
+        <Mod id="9DE86512-DE1A-400D-8C0A-AB46EBBF76B9" title="LOC_GRANCOLOMBIA_MAYA_MOD_TITLE"/>
+        <!-- <Mod id="2d90451f-08c9-47de-bce8-e9b7fdecbe92" title="[COLOR:ResGoldLabelCS]Wondrous[ENDCOLOR] Goody Huts"/> -->
+		<Mod id="29dfeca5-042a-4259-853d-61f554851af7" title="Enhanced Community FrontEnd"/>
+		<Mod id="ed183371-82ee-488f-8e8d-53d5c48082d0" title="LOC_EGHS_MOD_TITLE"/>
+    </References>
+    <!-- <Dependencies> -->
+        <!-- <Mod id="29dfeca5-042a-4259-853d-61f554851af7" title="Enhanced Community FrontEnd"/> -->
+    <!-- </Dependencies> -->
+    <LocalizedText>
+        <Text id="LOC_HGHR_MOD_TITLE">
+            <en_US>Hostile Goody Hut Rewards</en_US>
+        </Text>
+        <Text id="LOC_HGHR_MOD_TEASER">
+            <en_US>Introduces and provides setup options for Hostile Tribal Villagers in SP and MP games.</en_US>
+        </Text>
+        <Text id="LOC_HGHR_MOD_DESCRIPTION">
+            <en_US>Introduces and provides setup options for Hostile Tribal Villagers in single- and multi-player games:[NEWLINE] [ICON_Bullet] Hostile Villagers AFTER rewards: Configure the chance of encountering hostile villagers following any other type of reward provided by a Tribal Village.[NEWLINE] [ICON_Bullet] Hostile Villagers AS rewards: When Enhanced Goody Hut Setup (EGHS) is present and enabled, configure whether hostile villagers can be encountered upon activating a Tribal Village, in lieu of any other reward.</en_US>
+        </Text>
+        <Text id="LOC_HGHR_MOD_AUTHORS">
+            <en_US>Copyright © 2020-2024 yofabronecoforo. All rights reserved.</en_US>
+        </Text>
+        <Text id="LOC_HGHR_MOD_SPECIALTHANKS">
+            <en_US>The Community</en_US>
+        </Text>
+    </LocalizedText>
+	<ActionCriteria>
+		<!-- all rulesets -->
+		<Criteria id="HGHR" any="1">
+			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
+		</Criteria>
+		<!-- standard ruleset only -->
+		<Criteria id="HGHR_Base">
+			<RuleSetInUse>RULESET_STANDARD</RuleSetInUse>
+		</Criteria>
+		<!-- rise and fall ruleset only -->
+		<Criteria id="HGHR_Expansion1">
+			<RuleSetInUse>RULESET_EXPANSION_1</RuleSetInUse>
+		</Criteria>
+		<!-- any expansion ruleset -->
+		<Criteria id="HGHR_Expansion1AndBeyond" any="1">
+			<RuleSetInUse>RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
+		</Criteria>
+		<!-- gathering storm ruleset only -->
+		<Criteria id="HGHR_Expansion2">
+			<RuleSetInUse>RULESET_EXPANSION_2</RuleSetInUse>
+		</Criteria>
+		<!-- Gran Colombia and Maya DLC present -->
+		<Criteria id="HGHR_GranColombia_Maya">
+			<ModInUse>9DE86512-DE1A-400D-8C0A-AB46EBBF76B9</ModInUse>
+		</Criteria>
+		<!-- Wondrous Goody Huts community mod present -->
+		<!-- <Criteria id="HGHR_Wondrous_Goody_Huts"> -->
+			<!-- <ModInUse>2d90451f-08c9-47de-bce8-e9b7fdecbe92</ModInUse> -->
+		<!-- </Criteria> -->
+		
+	</ActionCriteria>
+    <FrontEndActions>
+		<UpdateDatabase id="HGHR_CONFIGURATION_SCHEMA">
+			<!-- this needs to load RFE -->
+			<Properties>
+				<LoadOrder>-52</LoadOrder>
+			</Properties>
+			<File>Configuration/Schema.sql</File>
+		</UpdateDatabase>
+		<UpdateText id="HGHR_CONFIGURATION_TEXT">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>2000000</LoadOrder>
+      		</Properties>
+			<File>Localization/en_US/Frontend_Text.xml</File>
+		</UpdateText>
+		<ImportFiles id="HGHR_CONFIGURATION_UI">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>2000001</LoadOrder>
+      		</Properties>
+			<Items>
+                <!-- SP/MP replacements -->
+				<File>UI/GameSetupLogic_HGHR.lua</File>
+				<!-- SP replacements -->
+				<File>UI/AdvancedSetup_HGHR.lua</File>
+                <!-- MP replacements -->
+				<File>UI/HostGame_HGHR.lua</File>
+				<!-- goody hut picker -->
+				<!-- <File>UI/GoodyHutPicker.lua</File> -->
+				<!-- <File>UI/GoodyHutPicker.xml</File> -->
+			</Items>
+		</ImportFiles>
+		<UpdateDatabase id="HGHR_CONFIGURATION_DATABASE_EGHS">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>2000002</LoadOrder>
+      		</Properties>
+			<File>Configuration/Frontend_EGHS.sql</File>
+        </UpdateDatabase>
+		<UpdateDatabase id="HGHR_CONFIGURATION_DATABASE">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>2000003</LoadOrder>
+      		</Properties>
+			<File>Configuration/Frontend.sql</File>
+        </UpdateDatabase>
+    </FrontEndActions>
+	<InGameActions>
+		<!-- load Frontend UI scripts Ingame for YnAMP compatibility -->
+		<ImportFiles id="HGHR_GAMEPLAY_YNAMP_LOAD_FRONTEND_UI" criteria="HGHR">
+			<Properties>
+				<!-- this needs to load RFL -->
+        		<LoadOrder>4000000</LoadOrder>
+      		</Properties>
+			<File>UI/GameSetupLogic_HGHR.lua</File>
+			<File>UI/AdvancedSetup_HGHR.lua</File>
+			<File>UI/HostGame_HGHR.lua</File>
+		</ImportFiles>
+		<AddGameplayScripts id="HGHR_GAMEPLAY_SCRIPT_HOSTILEREWARD" criteria="HGHR">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>4000000</LoadOrder>
+      		</Properties>
+			<File>Scripts/HostileReward.lua</File>
+		</AddGameplayScripts>
+		
+	</InGameActions>
+    <Files>
+		<!--  -->
+        <File>Configuration/Frontend.sql</File>
+		<File>Configuration/Frontend_EGHS.sql</File>
+        <File>Configuration/Schema.sql</File>
+		<!--  -->
+		
+		<!--  -->
+        <File>Localization/en_US/Frontend_Text.xml</File>
+		<!--  -->
+		<File>Scripts/HostileReward.lua</File>
+		<!--  -->
+        <File>UI/AdvancedSetup_HGHR.lua</File>
+        <File>UI/GameSetupLogic_HGHR.lua</File>
+        <!-- <File>UI/GoodyHutPicker.lua</File> -->
+		<!-- <File>UI/GoodyHutPicker.xml</File> -->
+        <File>UI/HostGame_HGHR.lua</File>
+    </Files>
+</Mod>
+
+<!--==========================================================================
+	End modinfo definition
+===========================================================================-->

@@ -126,6 +126,14 @@
         </UpdateDatabase>
     </FrontEndActions>
 	<InGameActions>
+		<!--  -->
+		<UpdateDatabase id="HGHR_GAMEPLAY_DATABASE" criteria="HGHR">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>4000001</LoadOrder>
+      		</Properties>
+			<File>Gameplay/Ingame.sql</File>
+        </UpdateDatabase>
 		<!-- load Frontend UI scripts Ingame for YnAMP compatibility -->
 		<ImportFiles id="HGHR_GAMEPLAY_YNAMP_LOAD_FRONTEND_UI" criteria="HGHR">
 			<Properties>
@@ -151,7 +159,7 @@
 		<File>Configuration/Frontend_EGHS.sql</File>
         <File>Configuration/Schema.sql</File>
 		<!--  -->
-		
+		<File>Gameplay/Ingame.sql</File>
 		<!--  -->
         <File>Localization/en_US/Frontend_Text.xml</File>
 		<!--  -->

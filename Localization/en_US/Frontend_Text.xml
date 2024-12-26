@@ -1,0 +1,553 @@
+<!--==========================================================================
+	Hostile Goody Hut Rewards (HGHR) for Civilization VI
+    Copyright © 2020-2024 yofabronecoforo
+    All rights reserved.
+
+    Begin en_US localized frontend text
+===========================================================================-->
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+	<LocalizedText>
+        <!-- content flags for picker tooltips -->
+        <Replace Tag="LOC_HGHR_TT" Language="en_US">
+            <Text>[NEWLINE]  [COLOR_Blue]Mod[ENDCOLOR]: Hostile Goody Hut Rewards</Text>
+        </Replace>
+        <!-- goody hut frequency -->
+        <!-- <Replace Tag="LOC_GOODYHUT_FREQUENCY_NAME" Language="en_US">
+            <Text>Tribal Village Frequency</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_FREQUENCY_DESCRIPTION" Language="en_US">
+            <Text>Choose the distribution of Tribal Villages on the map as a percentage of the baseline amount.</Text>
+        </Replace> -->
+        <!-- no barbarians tooltip -->
+        <!-- <Replace Tag="LOC_GAME_NO_BARBARIANS_DESCRIPTION" Language="en_US">
+            <Text>Enabling this option removes barbarians.</Text>
+        </Replace> -->
+        <!-- no tribal villages tooltip -->
+        <!-- <Replace Tag="LOC_GAME_NO_GOODY_HUTS_DESCRIPTION" Language="en_US">
+            <Text>Enabling this option removes Tribal Villages; by extension, it also overrides any other reward-related options.</Text>
+        </Replace> -->
+        <!-- equalize goody hut types -->
+        <!-- <Replace Tag="LOC_GAME_EQUALIZE_GOODYHUT_TYPES_NAME" Language="en_US">
+            <Text>Equalize Tribal Village Types</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GAME_EQUALIZE_GOODYHUT_TYPES_DESCRIPTION" Language="en_US">
+            <Text>Enabling this option will assign identical Weight values to all Tribal Village types which are not disabled via the picker; subject to the whims of the RNG, when a Tribal Village is activated, each such type will have an equal chance of being selected.[NEWLINE][NEWLINE]Will be ignored if 'No Tribal Villages' is enabled.</Text>
+        </Replace> -->
+        <!-- equalize goody hut rewards -->
+        <!-- <Replace Tag="LOC_GAME_EQUALIZE_GOODYHUT_REWARDS_NAME" Language="en_US">
+            <Text>Equalize Tribal Village Rewards</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GAME_EQUALIZE_GOODYHUT_REWARDS_DESCRIPTION" Language="en_US">
+            <Text>Enabling this option will assign identical Weight values to all Tribal Village rewards which are not disabled via the picker; subject to the whims of the RNG, when a Tribal Village is activated, each such reward will have an equal chance of being selected when the appropriate type is selected.[NEWLINE][NEWLINE]Will be ignored if 'No Tribal Villages' is enabled.</Text>
+        </Replace> -->
+        <!-- remove minimum turn requirement -->
+        <!-- <Replace Tag="LOC_GAME_REMOVE_MINTURN_NAME" Language="en_US">
+			<Text>Remove Minimum Turn Requirements</Text>
+		</Replace> -->
+        <!-- <Replace Tag="LOC_GAME_REMOVE_MINTURN_DESCRIPTION" Language="en_US">
+			<Text>Enabling this option sets the Minimum Turn for all active rewards to 0; this effectively makes all rewards available on any game Turn.[NEWLINE][NEWLINE][COLOR_Red]WARNING[ENDCOLOR]: This can have unintended, possibly game-breaking consequences. Exercise caution when enabling this option.</Text>
+		</Replace> -->
+        <!-- disable meteor strike goodies - XP2 -->
+        <!-- <Replace Tag="LOC_GAME_DISABLE_METEOR_STRIKE_NAME" Language="en_US">
+			<Text>Disable Meteor Strike Goodies</Text>
+		</Replace> -->
+        <!-- <Replace Tag="LOC_GAME_DISABLE_METEOR_STRIKE_DESCRIPTION" Language="en_US">
+			<Text>Enabling this option prevents goodies from being received from the meteor strike event.[NEWLINE][NEWLINE]For Gathering Storm ruleset.</Text>
+		</Replace> -->
+        <!-- goody hut types picker -->
+        <!-- <Replace Tag="LOC_GOODYHUT_TYPES_NAME" Language="en_US">
+            <Text>Select Tribal Village Types</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_TYPES_DESCRIPTION" Language="en_US">
+            <Text>Choose which Tribal Village type(s) have a chance of appearing.</Text>
+        </Replace> -->
+        <!-- goody hut rewards picker -->
+        <!-- <Replace Tag="LOC_GOODYHUT_REWARDS_NAME" Language="en_US">
+            <Text>Select Tribal Village Rewards</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_REWARDS_DESCRIPTION" Language="en_US">
+            <Text>Choose which Tribal Village reward(s) have a chance of appearing.</Text>
+        </Replace> -->
+        <!-- goody hut picker buttons -->
+        <!-- <Replace Tag="LOC_EGHS_CONFIRM_ALL" Language="en_US">
+            <Text>Confirm All Selections</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_RESET_ALL" Language="en_US">
+            <Text>Reset All Selections to </Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_DEFAULT_ALL" Language="en_US">
+            <Text>Reset All to Default</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_DISABLE_ALL" Language="en_US">
+            <Text>Disable All</Text>
+        </Replace> -->
+        <!-- picker sorting label -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_BY" Language="en_US">
+            <Text>Sort By:</Text>
+        </Replace> -->
+        <!-- picker sorting options -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_NAME_ASC" Language="en_US">
+            <Text>Name (A to Z)</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_NAME_DESC" Language="en_US">
+            <Text>Name (Z to A)</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_SELWEIGHT_ASC" Language="en_US">
+            <Text>Selected Weight (Low to High)</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_SELWEIGHT_DESC" Language="en_US">
+            <Text>Selected Weight (High to Low)</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_TYPE_ASC" Language="en_US">
+            <Text>Type (A to Z)</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_TYPE_DESC" Language="en_US">
+            <Text>Type (Z to A)</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_DEFWEIGHT_ASC" Language="en_US">
+            <Text>Default Weight (Low to High)</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_GOODYHUT_SORT_DEFWEIGHT_DESC" Language="en_US">
+            <Text>Default Weight (High to Low)</Text>
+        </Replace> -->
+        <!-- picker item button tooltip -->
+        <!-- <Replace Tag="LOC_GOODYHUT_BUTTON_TT_TEXT" Language="en_US">
+			<Text>Click here to cycle the selected Weight value of this item in the following order:[NEWLINE][NEWLINE][ICON_Bullet] Default [ICON_GoingTo] [COLOR_Red]DISABLED[ENDCOLOR] [ICON_GoingTo] Ascending Rarity [ICON_GoingTo] Default[NEWLINE][NEWLINE]Use the pulldown to directly select a desired Weight value.</Text>
+		</Replace> -->
+        <!-- picker item weight pulldown options for types and rewards -->
+        <!-- <Replace Tag="LOC_WEIGHT_DEFAULT_NAME" Language="en_US">
+            <Text>Default</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_DEFAULT_DESCRIPTION" Language="en_US">
+            <Text>Leave this item's Weight unchanged from the default value indicated in its description.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_DISABLED_NAME" Language="en_US">
+            <Text>DISABLED</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_DISABLED_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to [COLOR_Red]0[ENDCOLOR].</Text>
+        </Replace> -->
+        <!-- picker item weight pulldown options for types -->
+        <!-- <Replace Tag="LOC_WEIGHT_QUADRUPLE_NAME" Language="en_US">
+            <Text>Quadruple</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_QUADRUPLE_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 400.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_DOUBLE_NAME" Language="en_US">
+            <Text>Double</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_DOUBLE_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 200.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_NORMAL_NAME" Language="en_US">
+            <Text>Normal</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_NORMAL_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 100.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_HALF_NAME" Language="en_US">
+            <Text>Half</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_HALF_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 50.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_QUARTER_NAME" Language="en_US">
+            <Text>Quarter</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_QUARTER_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 25.</Text>
+        </Replace> -->
+        <!-- picker item weight pulldown options for rewards -->
+        <!-- <Replace Tag="LOC_WEIGHT_UBIQUITOUS_NAME" Language="en_US">
+            <Text>Ubiquitous</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_UBIQUITOUS_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 100.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_COMMON_NAME" Language="en_US">
+            <Text>Common</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_COMMON_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 55.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_UNCOMMON_NAME" Language="en_US">
+            <Text>Uncommon</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_UNCOMMON_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 30.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_RARE_NAME" Language="en_US">
+            <Text>Rare</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_RARE_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 15.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_LEGENDARY_NAME" Language="en_US">
+            <Text>Legendary</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_LEGENDARY_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 5.</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_MYTHIC_NAME" Language="en_US">
+            <Text>Mythic</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_WEIGHT_MYTHIC_DESCRIPTION" Language="en_US">
+            <Text>Set this item's Weight to 1.</Text>
+        </Replace> -->
+        <!-- picker focused item tags -->
+        <!-- <Replace Tag="LOC_EGHS_DEFAULT_WEIGHT" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Default Weight: {1_DefaultWeight}</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_NUM_REWARDS" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Available rewards: {1_NumRewards}</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_GOODYHUT_TYPE" Language="en_US">
+            <Text>{1_GoodyHut} type</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_MINIMUM_TURN" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Available from Turn {1_MinTurn}</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_ONE_CITY" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Minimum one city: {1_OneCity}</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_REQUIRES_UNIT" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Requires unit: {1_RequiresUnit}</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_PICKER_TYPE" Language="en_US">
+            <Text>Provides:{1_Description}{2_ChangesXP1}{3_ChangesXP2}{4_DefaultWeight}{5_NumRewards}{6_Notice}</Text>
+        </Replace> -->
+        <!-- <Replace Tag="LOC_EGHS_PICKER_REWARD" Language="en_US">
+            <Text>{1_GoodyHut}{2_DefaultWeight}{3_Description}{4_MinTurn}{5_OneCity}{6_RequiresUnit}{7_Notice}</Text>
+        </Replace> -->
+        <!-- hostile melee type -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_HOSTILES_NAME" Language="en_US">
+            <Text>Hostile Villagers</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_HOSTILES_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][ICON_Bullet] Hostile [ICON_Barbarian] combat units near the target plot</Text>
+        </Replace>
+        <!-- hostile melee type - one unit -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_HOSTILE_MELEE_1_NAME" Language="en_US">
+            <Text>1 Hostile [ICON_Barbarian] Melee Unit</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_HOSTILE_MELEE_1_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]One (1) hostile [ICON_Barbarian] melee unit will appear near the target plot.</Text>
+        </Replace>
+        <!-- hostile melee type - two units -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_HOSTILE_MELEE_2_NAME" Language="en_US">
+            <Text>2 Hostile [ICON_Barbarian] Melee Units</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_HOSTILE_MELEE_2_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Two (2) hostile [ICON_Barbarian] melee units will appear near the target plot.</Text>
+        </Replace>
+        <!-- hostile melee type - three units -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_HOSTILE_MELEE_3_NAME" Language="en_US">
+            <Text>3 Hostile [ICON_Barbarian] Melee Units</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_HOSTILE_MELEE_3_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Three (3) hostile [ICON_Barbarian] melee units will appear near the target plot.</Text>
+        </Replace>
+        <!-- faith type -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_FAITH_NAME" Language="en_US">
+            <Text>Faith</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_FAITH_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][ICON_Bullet] Free caches of [ICON_Faith] Faith in various amounts</Text>
+        </Replace>
+        <!-- faith type - small faith cache -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_SMALL_FAITH_NAME" Language="en_US">
+            <Text>20 [ICON_Faith] Faith</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_SMALL_FAITH_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive twenty (20) [ICON_Faith] Faith.</Text>
+        </Replace>
+        <!-- faith type - medium faith cache -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_MEDIUM_FAITH_NAME" Language="en_US">
+            <Text>60 [ICON_Faith] Faith</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_MEDIUM_FAITH_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive sixty (60) [ICON_Faith] Faith.</Text>
+        </Replace>
+        <!-- faith type - large faith cache -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_LARGE_FAITH_NAME" Language="en_US">
+            <Text>100 [ICON_Faith] Faith</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_LARGE_FAITH_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one hundred (100) [ICON_Faith] Faith.</Text>
+        </Replace>
+        <!-- gold type -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GOLD_NAME" Language="en_US">
+            <Text>Gold</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GOLD_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][ICON_Bullet] Free caches of [ICON_Gold] Gold in various amounts</Text>
+        </Replace>
+        <!-- gold type - small gold cache -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_SMALL_GOLD_NAME" Language="en_US">
+            <Text>40 [ICON_Gold] Gold</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_SMALL_GOLD_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive forty (40) [ICON_Gold] Gold.</Text>
+        </Replace>
+        <!-- gold type - medium gold cache -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_MEDIUM_GOLD_NAME" Language="en_US">
+            <Text>75 [ICON_Gold] Gold</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_MEDIUM_GOLD_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive seventy-five (75) [ICON_Gold] Gold.</Text>
+        </Replace>
+        <!-- gold type - large gold cache -->
+         <Replace Tag="LOC_EGHS_GOODYHUT_LARGE_GOLD_NAME" Language="en_US">
+            <Text>120 [ICON_Gold] Gold</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_LARGE_GOLD_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one hundred twenty (120) [ICON_Gold] Gold.</Text>
+        </Replace>
+        <!-- military type -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_MILITARY_NAME" Language="en_US">
+            <Text>Military</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_MILITARY_DESCRIPTION" Language="en_US">
+            <!-- <Text>[NEWLINE][ICON_Bullet] Free [ICON_Unit] combat units[NEWLINE][ICON_Bullet] Free healing for [ICON_Unit] combat units[NEWLINE][ICON_Bullet] Free experience for [ICON_Unit] combat units[NEWLINE][ICON_Bullet] Free upgrades for [ICON_Unit] combat units</Text> -->
+            <Text>[NEWLINE][ICON_Bullet] Free [ICON_Unit] combat units[NEWLINE][ICON_Bullet] Free healing for [ICON_Unit] combat units[NEWLINE][ICON_Bullet] Free experience for [ICON_Unit] combat units</Text>
+        </Replace>
+        <!-- military type - one scout -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_SCOUT_NAME" Language="en_US">
+            <Text>1 [ICON_Unit] Scout</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_SCOUT_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one (1) free [ICON_Unit] Scout.</Text>
+        </Replace>
+        <!-- military type - experience points -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_EXPERIENCE_NAME" Language="en_US">
+            <Text>20 Experience Points</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_EXPERIENCE_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]The receiving unit earns twenty (20) experience points.</Text>
+        </Replace>
+        <!-- military type - healing -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_HEAL_NAME" Language="en_US">
+            <Text>Full Heal</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_HEAL_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]The receiving unit's hit points are fully healed.</Text>
+        </Replace>
+        <!-- military type - unit upgrade -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_UPGRADE_NAME" Language="en_US">
+            <Text>Unit Upgrade</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_UPGRADE_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]The receiving unit is provided with a free upgrade to the next unit type in its promotion class.</Text>
+        </Replace>
+        <!-- science type -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_SCIENCE_NAME" Language="en_US">
+            <Text>Science</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_SCIENCE_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][ICON_Bullet] Free [ICON_TechBoosted] Technology boosts[NEWLINE][ICON_Bullet] Free Technologies</Text>
+        </Replace>
+        <!-- science type - one tech boost -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_ONE_TECH_BOOST_NAME" Language="en_US">
+            <Text>1 [ICON_TechBoosted] Technology Boost</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_ONE_TECH_BOOST_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one (1) free [ICON_TechBoosted] Technology boost.</Text>
+        </Replace>
+        <!-- science type - two tech boosts -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_TWO_TECH_BOOSTS_NAME" Language="en_US">
+            <Text>2 [ICON_TechBoosted] Technology Boosts</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_TWO_TECH_BOOSTS_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive two (2) free [ICON_TechBoosted] Technology boosts.</Text>
+        </Replace>
+        <!-- science type - one tech -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_ONE_TECH_NAME" Language="en_US">
+            <Text>1 Technology</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_ONE_TECH_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one (1) free Technology.</Text>
+        </Replace>
+        <!-- survivors type -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_SURVIVORS_NAME" Language="en_US">
+            <Text>Survivors</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_SURVIVORS_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][ICON_Bullet] Free [ICON_Citizen] Population in Cities[NEWLINE][ICON_Bullet] Free [ICON_Unit] civilian units</Text>
+        </Replace>
+        <!-- survivors type - one population -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_ADD_POP_NAME" Language="en_US">
+            <Text>1 [ICON_Citizen] Citizen</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_ADD_POP_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]The population in a random City increases by one (1) [ICON_Citizen] Citizen.</Text>
+        </Replace>
+        <!-- survivors type - one builder -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_BUILDER_NAME" Language="en_US">
+            <Text>1 [ICON_Unit] Builder</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_BUILDER_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one (1) free [ICON_Unit] Builder.</Text>
+        </Replace>
+        <!-- survivors type - one trader -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_TRADER_NAME" Language="en_US">
+            <Text>1 [ICON_Unit] Trader</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_TRADER_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one (1) free [ICON_Unit] Trader.</Text>
+        </Replace>
+        <!-- survivors type - one settler -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_SETTLER_NAME" Language="en_US">
+            <Text>1 [ICON_Unit] Settler</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_SETTLER_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one (1) free [ICON_Unit] Settler.</Text>
+        </Replace>
+        <!-- diplomacy type -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_DIPLOMACY_NAME" Language="en_US">
+            <Text>Diplomacy</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_DIPLOMACY_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][ICON_Bullet] Free [ICON_Favor] Diplomatic Favor[NEWLINE][ICON_Bullet] Free [ICON_Envoy] Envoys[NEWLINE][ICON_Bullet] Free [ICON_Governor] Governor Titles</Text>
+        </Replace>
+        <!-- diplomacy type - diplomatic favor - XP2 -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_FAVOR_NAME" Language="en_US">
+            <Text>20 [ICON_Favor] Diplomatic Favor</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_FAVOR_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive twenty (20) [ICON_Favor] Diplomatic Favor.</Text>
+        </Replace>
+        <!-- diplomacy type - one envoy - XP2 -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_ENVOY_NAME" Language="en_US">
+            <Text>1 [ICON_Envoy] Envoy</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_ENVOY_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one (1) free [ICON_Envoy] Envoy.</Text>
+        </Replace>
+        <!-- diplomacy type - one governor title - XP2 -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GOVERNOR_TITLE_NAME" Language="en_US">
+            <Text>1 [ICON_Governor] Governor Title</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GOVERNOR_TITLE_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive one (1) free [ICON_Governor] Governor Title.</Text>
+        </Replace>
+        <!-- military type - strategic resources - XP2 -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_RESOURCES_NAME" Language="en_US">
+            <Text>20 Strategic Resources</Text>
+        </Replace>
+        <Replace Tag="LOC_EGHS_GOODYHUT_GRANT_RESOURCES_DESCRIPTION" Language="en_US">
+            <Text>[NEWLINE][NEWLINE]Receive twenty (20) of the most advanced strategic resource you have access to.</Text>
+        </Replace>
+        <!-- military type description for XP2 -->
+        <Replace Tag="LOC_EGHS_GOODYHUT_MILITARY_XP2" Language="en_US">
+            <Text>[NEWLINE][ICON_Bullet] Free strategic resources</Text>
+        </Replace>
+        <!-- military type - one scout description for XP2 -->
+        <!-- <Replace Tag="LOC_EGHS_XP2_GOODYHUT_GRANT_SCOUT_DESCRIPTION" Language="en_US">
+            <Text>Military type[NEWLINE][NEWLINE]Default Weight: 35 (Common)[NEWLINE][NEWLINE]Receive one (1) free [ICON_Unit] Scout.[NEWLINE][NEWLINE]Available from Turn 1[NEWLINE][NEWLINE]Minimum one city: Yes[NEWLINE][NEWLINE]Requires unit: Yes</Text>
+        </Replace> -->
+        <!-- military type - experience points description for XP2 -->
+        <!-- <Replace Tag="LOC_EGHS_XP2_GOODYHUT_GRANT_EXPERIENCE_DESCRIPTION" Language="en_US">
+            <Text>Military type[NEWLINE][NEWLINE]Default Weight: 20 (Rare)[NEWLINE][NEWLINE]The receiving unit earns twenty (20) experience points.[NEWLINE][NEWLINE]Available from Turn 1[NEWLINE][NEWLINE]Minimum one city: No[NEWLINE][NEWLINE]Requires unit: Yes</Text>
+        </Replace> -->
+        <!-- military type - healing description for XP2 -->
+        <!-- <Replace Tag="LOC_EGHS_XP2_GOODYHUT_HEAL_DESCRIPTION" Language="en_US">
+            <Text>Military type[NEWLINE][NEWLINE]Default Weight: 25 (Uncommon)[NEWLINE][NEWLINE]The receiving unit's hit points are fully healed.[NEWLINE][NEWLINE]Available from Turn 1[NEWLINE][NEWLINE]Minimum one city: No[NEWLINE][NEWLINE]Requires unit: Yes</Text>
+        </Replace> -->
+        <!-- wondrous type -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_WONDROUS_NAME" Language="en_US">
+			<Text>Wondrous</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_WONDROUS_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][ICON_Bullet] Various rewards with powerful effects</Text>
+		</Replace>
+        <Replace Tag="LOC_EGHS_WONDROUS_TYPE_WARNING" Language="en_US">
+			<Text>[NEWLINE][NEWLINE][ICON_Exclamation] All rewards of this type technically require that the providing Tribal Village be activated by a unit, but many are not configured with this requirement. Such rewards [COLOR_Green]CAN[ENDCOLOR] and [COLOR_Green]WILL[ENDCOLOR] be provided when a Tribal Village is [COLOR_Red]NOT[ENDCOLOR] activated by a unit. For such rewards, World View text will be briefly displayed for Human players, but there will otherwise be [COLOR_Red]NO[ENDCOLOR] discernable effect.</Text>
+		</Replace>
+        <Replace Tag="LOC_EGHS_WONDROUS_REWARD_WARNING" Language="en_US">
+			<Text> [ICON_Exclamation] When a Tribal Village that is [COLOR_Red]NOT[ENDCOLOR] activated by a unit provides this reward, World View text will be briefly displayed for Human players, but there will otherwise be [COLOR_Red]NO[ENDCOLOR] discernable effect.</Text>
+		</Replace>
+        <!-- wondrous type - random resource -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_RANDOMRESOURCE_NAME" Language="en_US">
+			<Text>Find New Resource</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_RANDOMRESOURCE_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]Discover a new resource in a random plot in territory you control.</Text>
+		</Replace>
+		<!-- wondrous type - random unit -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_RANDOMUNIT_NAME" Language="en_US">
+			<Text>1 Random [ICON_Unit] Unit</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_RANDOMUNIT_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]Receive one (1) random [ICON_Unit] Unit, possibly one which is unique to another Civilization.</Text>
+		</Replace>
+		<!-- wondrous type - random improvement -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_RANDOMIMPROVEMENT_NAME" Language="en_US">
+			<Text>1 Random Improvement</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_RANDOMIMPROVEMENT_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]Receive one (1) random Improvement, possibly one which is unique to another Civilization.</Text>
+		</Replace>
+		<!-- wondrous type - sight bomb -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_SIGHTBOMB_NAME" Language="en_US">
+			<Text>Receive [ICON_Ability] Wilderness Training</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_SIGHTBOMB_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]The receiving unit is granted the [ICON_Ability] Wilderness Training ability (+2 Sight, can see through features).</Text>
+		</Replace>
+		<!-- wondrous type - random policy -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_RANDOMPOLICY_NAME" Language="en_US">
+			<Text>Unlock 1 [ICON_Policy] Policy</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_RANDOMPOLICY_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]Unlock one (1) random [ICON_Policy] Policy from the current Era.</Text>
+		</Replace>
+		<!-- wondrous type - formation -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_FORMATION_NAME" Language="en_US">
+			<Text>Upgrade Military Formation</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_FORMATION_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]The receiving unit is upgraded to a [ICON_Corps] Corps or [ICON_Army] Army, if it is eligible for such an upgrade.</Text>
+		</Replace>
+		<!-- wondrous type - natural wonder -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_WONDER_NAME" Language="en_US">
+			<Text>Reveal Natural Wonder</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_WONDER_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]Discover an unrevealed natural wonder.</Text>
+		</Replace>
+		<!-- wondrous type - city-state -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_CITYSTATE_NAME" Language="en_US">
+			<Text>Meet City-State</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_CITYSTATE_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]Discover an unmet city-state.</Text>
+		</Replace>
+		<!-- wondrous type - spy -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_SPY_NAME" Language="en_US">
+			<Text>1 [ICON_Unit] Spy</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_SPY_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]Receive one (1) free [ICON_Unit] Spy in a random City.</Text>
+		</Replace>
+		<!-- wondrous type - production boost -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_PRODUCTION_NAME" Language="en_US">
+			<Text>Finish Current [ICON_Production] Production</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_PRODUCTION_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]Receive a burst of [ICON_Production] Production in a random City, which completes the current item in its Production queue.</Text>
+		</Replace>
+		<!-- wondrous type - teleport -->
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_TELEPORT_NAME" Language="en_US">
+			<Text>World Tour</Text>
+		</Replace>
+		<Replace Tag="LOC_EGHS_GOODYHUT_SAILOR_TELEPORT_DESCRIPTION" Language="en_US">
+			<Text>[NEWLINE][NEWLINE]The receiving unit is instantly teleported to a far away tile. It is joined in this world tour by one (1) free [ICON_Unit] Settler.</Text>
+		</Replace>
+    </LocalizedText>
+</GameData>
+
+<!--==========================================================================
+	End en_US localized frontend text
+===========================================================================-->

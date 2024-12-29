@@ -5,7 +5,7 @@
 
     Begin HostileReward.lua gameplay script
 =========================================================================== ]]
-print("Loading gameplay script GoodyHutReward.lua . . .");
+print("Loading gameplay script HostileReward.lua . . .");
 
 --[[ =========================================================================
 	table HostileVillagers will be an exposed HGHR object

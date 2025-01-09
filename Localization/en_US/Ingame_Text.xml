@@ -1,0 +1,30 @@
+<!--==========================================================================
+	Hostile Goody Hut Rewards (HGHR) for Civilization VI
+    Copyright © 2020-2025 yofabronecoforo
+    All rights reserved.
+
+    Begin en_US localized ingame text
+===========================================================================-->
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+	<LocalizedText>
+        <!-- hostiles type world-view popup -->
+        <Replace Tag="LOC_GOODYHUT_HOSTILES_DESCRIPTION" Language="en_US">
+            <Text>[COLOR_Red]Hostile villagers appear![ENDCOLOR]</Text>
+        </Replace>
+        <!--  -->
+        <Replace Tag="LOC_HOSTILE_VILLAGERS_NOTIFICATION_TITLE" Language="en_US">
+            <Text>Hostile Villagers</Text>
+        </Replace>
+        <Replace Tag="LOC_HOSTILE_VILLAGERS_NOTIFICATION_UNIT" Language="en_US">
+            <Text>A group of villagers have organized into {1_Num} hostile [ICON_Barbarian] {2_Unit} {1_Num: plural 1?unit; other?units;} near the former site of their village!</Text>
+        </Replace>
+        <Replace Tag="LOC_HOSTILE_VILLAGERS_NOTIFICATION_CAMP" Language="en_US">
+            <Text>A group of villagers have founded a new [ICON_Barbarian] Barbarian Outpost near the former site of their village!</Text>
+        </Replace>
+    </LocalizedText>
+</GameData>
+
+<!--==========================================================================
+	End en_US localized ingame text
+===========================================================================-->

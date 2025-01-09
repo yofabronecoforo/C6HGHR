@@ -1,6 +1,6 @@
 <!--==========================================================================
 	Hostile Goody Hut Rewards (HGHR) for Civilization VI
-    Copyright © 2020-2024 yofabronecoforo
+    Copyright © 2020-2025 yofabronecoforo
     All rights reserved.
 
     Begin modinfo definition
@@ -127,6 +127,22 @@
     </FrontEndActions>
 	<InGameActions>
 		<!--  -->
+		<UpdateDatabase id="HGHR_GAMEPLAY_SCHEMA" criteria="HGHR">
+			<!-- this needs to load RFE -->
+			<Properties>
+				<LoadOrder>-52</LoadOrder>
+			</Properties>
+			<File>Gameplay/Schema.sql</File>
+		</UpdateDatabase>
+		<!--  -->
+		<UpdateText id="HGHR_GAMEPLAY_TEXT" criteria="HGHR">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>2000000</LoadOrder>
+      		</Properties>
+			<File>Localization/en_US/Ingame_Text.xml</File>
+		</UpdateText>
+		<!--  -->
 		<UpdateDatabase id="HGHR_GAMEPLAY_DATABASE" criteria="HGHR">
 			<!-- this needs to load RFL -->
 			<Properties>
@@ -134,6 +150,24 @@
       		</Properties>
 			<File>Gameplay/Ingame.sql</File>
         </UpdateDatabase>
+		<!--  -->
+		<UpdateDatabase id="HGHR_GAMEPLAY_DATABASE_XP1_AND_BEYOND" criteria="HGHR_Expansion1AndBeyond">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>4000002</LoadOrder>
+      		</Properties>
+			<!-- gameplay database changes for XP1 and beyond -->
+			<File>Gameplay/Ingame_XP1.sql</File>
+		</UpdateDatabase>
+		<!--  -->
+		<UpdateDatabase id="HGHR_GAMEPLAY_DATABASE_XP2" criteria="HGHR_Expansion2">
+			<!-- this needs to load RFL -->
+			<Properties>
+        		<LoadOrder>4000003</LoadOrder>
+      		</Properties>
+			<!-- gameplay database changes for XP1 and beyond -->
+			<File>Gameplay/Ingame_XP2.sql</File>
+		</UpdateDatabase>
 		<!-- load Frontend UI scripts Ingame for YnAMP compatibility -->
 		<ImportFiles id="HGHR_GAMEPLAY_YNAMP_LOAD_FRONTEND_UI" criteria="HGHR">
 			<Properties>
@@ -144,14 +178,28 @@
 			<File>UI/AdvancedSetup_HGHR.lua</File>
 			<File>UI/HostGame_HGHR.lua</File>
 		</ImportFiles>
-		<AddGameplayScripts id="HGHR_GAMEPLAY_SCRIPT_HOSTILEREWARD" criteria="HGHR">
+		<!--  -->
+		<AddGameplayScripts id="HGHR_GAMEPLAY_SCRIPT_HOSTILEVILLAGERS" criteria="HGHR">
 			<!-- this needs to load RFL -->
 			<Properties>
         		<LoadOrder>4000000</LoadOrder>
       		</Properties>
-			<File>Scripts/HostileReward.lua</File>
+			<File>Scripts/HostileVillagers.lua</File>
 		</AddGameplayScripts>
-		
+		<!-- <AddGameplayScripts id="HGHR_GAMEPLAY_SCRIPT_HOSTILEREWARD" criteria="HGHR"> -->
+			<!-- this needs to load RFL -->
+			<!-- <Properties> -->
+        		<!-- <LoadOrder>4000001</LoadOrder> -->
+      		<!-- </Properties> -->
+			<!-- <File>Scripts/HostileReward.lua</File> -->
+		<!-- </AddGameplayScripts> -->
+		<!-- <AddGameplayScripts id="HGHR_GAMEPLAY_SCRIPT_HOSTILITYCHECK" criteria="HGHR"> -->
+			<!-- this needs to load RFL -->
+			<!-- <Properties> -->
+        		<!-- <LoadOrder>4000002</LoadOrder> -->
+      		<!-- </Properties> -->
+			<!-- <File>Scripts/HostilityCheck.lua</File> -->
+		<!-- </AddGameplayScripts> -->
 	</InGameActions>
     <Files>
 		<!--  -->
@@ -160,10 +208,16 @@
         <File>Configuration/Schema.sql</File>
 		<!--  -->
 		<File>Gameplay/Ingame.sql</File>
+		<File>Gameplay/Ingame_XP1.sql</File>
+		<File>Gameplay/Ingame_XP2.sql</File>
+		<File>Gameplay/Schema.sql</File>
 		<!--  -->
         <File>Localization/en_US/Frontend_Text.xml</File>
+		<File>Localization/en_US/Ingame_Text.xml</File>
 		<!--  -->
-		<File>Scripts/HostileReward.lua</File>
+		<!-- <File>Scripts/HostileReward.lua</File> -->
+		<File>Scripts/HostileVillagers.lua</File>
+		<!-- <File>Scripts/HostilityCheck.lua</File> -->
 		<!--  -->
         <File>UI/AdvancedSetup_HGHR.lua</File>
         <File>UI/GameSetupLogic_HGHR.lua</File>

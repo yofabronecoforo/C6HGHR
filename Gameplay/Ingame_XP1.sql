@@ -21,12 +21,12 @@ AND (EraType = 'ERA_RENAISSANCE'
   OR EraType = 'ERA_INDUSTRIAL');
 
 -- replace UNIT_MEDIC in Eras 5-7
--- UPDATE HostileVillagerUnits 
--- SET UnitType = 'UNIT_SUPPLY_CONVOY' 
--- WHERE PromotionClass = 'PROMOTION_CLASS_SUPPORT' 
--- AND (EraType = 'ERA_MODERN' 
---   OR EraType = 'ERA_ATOMIC' 
---   OR EraType = 'ERA_INFORMATION');
+UPDATE HostileVillagerUnits 
+SET UnitType = 'UNIT_SUPPLY_CONVOY' 
+WHERE PromotionClass = 'PROMOTION_CLASS_SUPPORT' 
+AND (EraType = 'ERA_MODERN' 
+  OR EraType = 'ERA_ATOMIC' 
+  OR EraType = 'ERA_INFORMATION');
 
 /* ===========================================================================
     End ingame setup

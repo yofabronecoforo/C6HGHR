@@ -23,6 +23,12 @@ CREATE TABLE IF NOT EXISTS HostileVillagerUnits (
     PRIMARY KEY('EraType', 'PromotionClass')
 );
 
+-- 
+CREATE TABLE IF NOT EXISTS HostileRewardMembers (
+    'Name' TEXT, 
+    PRIMARY KEY('Name')
+);
+
 /* ===========================================================================
     End ingame schema setup
 =========================================================================== */

@@ -127,8 +127,9 @@ end
 function ValidatePlots( self:table ) 
     self.NearbyResources = {};
     self.CampPlots = {};
-    self.LandPlots = {};
-    self.WaterPlots = {};
+    self.UnitPlots = {};
+    self.NumLandPlots = 0;
+    self.NumWaterPlots = 0;
     local bHasNoResources:boolean = false;
     local p:number = 0;
     for _, pPlot in ipairs(self.NearbyPlots) do 
@@ -138,7 +139,7 @@ function ValidatePlots( self:table )
                 if not self.NearbyResources[i] then 
                     if (pPlot:GetResourceType() == i) then 
                         self.NearbyResources[i] = true;
-                        print(GameInfo.Resources[i].ResourceType, " is located nearby");
+                        -- print(GameInfo.Resources[i].ResourceType, " is located nearby");
                     end
                 end
             end
@@ -152,13 +153,18 @@ function ValidatePlots( self:table )
                             self.CampPlots[p] = pPlot;
                         end
                     end
-                    if not pPlot:IsWater() then 
-                        p = #self.LandPlots + 1;
-                        self.LandPlots[p] = pPlot;
-                    elseif pPlot:IsWater() then 
-                        p = #self.WaterPlots + 1;
-                        self.WaterPlots[p] = pPlot;
+                    p = #self.UnitPlots + 1;
+                    local plot:table = {};
+                    plot.X = pPlot:GetX();
+                    plot.Y = pPlot:GetY();
+                    plot.IsLand = not pPlot:IsWater();
+                    plot.IsWater = pPlot:IsWater();
+                    if plot.IsLand then 
+                        self.NumLandPlots = self.NumLandPlots + 1;
+                    elseif plot.IsWater then 
+                        self.NumWaterPlots = self.NumWaterPlots + 1;
                     end
+                    self.UnitPlots[p] = plot;
                 end
             end
         end
@@ -179,21 +185,21 @@ function GetEligibleUnit( self:table, class:string )
         local t:number = kUnit.Tech;
         local r:number = kUnit.Resource;
         if (t == -1) then 
-            print(unitType, " no tech ", " is valid");
+            -- print(unitType, " no tech ", " is valid");
             return unitType;
         elseif pPlayerTechs:HasTech(t) then 
             if (r == -1) then 
-                print(unitType, t, " no resource ", " is valid");
+                -- print(unitType, t, " no resource ", " is valid");
                 return unitType;
             else 
                 if self.NearbyResources[r] then 
-                    print(unitType, t, r,  " is valid");
+                    -- print(unitType, t, r,  " is valid");
                     return unitType;
                 end
             end
         end
     end
-    print(class, " is 'NOT' valid");
+    -- print(class, " is 'NOT' valid");
     return nil;
 end
 
@@ -223,8 +229,9 @@ end
 =========================================================================== ]]
 function Activate( self:table ) 
     self.Era = HostileVillagers.bIsNotStandard and Game.GetEras():GetCurrentEra() or Players[self.BarbarianID]:GetEras():GetEra();
-    self.Radius = 3;
-    print(self.Turn, self.X, self.Y, self.Player, self.Era, self.Hash);
+    self.Radius = 2;
+    print(self.X, self.Y, self.Hash, self.SubTypeGoodyHut);
+    local class:string = self.PromotionClass;
     self.NearbyPlots = self:GetAdjacentPlotsInRadius();
     print("Found ", #self.NearbyPlots, " valid nearby plot(s)");
     self:ValidatePlots();
@@ -232,59 +239,80 @@ function Activate( self:table )
     if self.Outpost then 
         local cX:number = -1;
         local cY:number = -1;
-        print("Found ", #self.CampPlots, " valid plot(s) for a Barbarian Outpost");
-        if (#self.CampPlots > 0) then 
-            while (not bCampPlaced and #self.CampPlots > 0) do 
-                local i:number = #self.CampPlots;
-                local pPlot:object = self.CampPlots[i];
-                self.CampPlots[i] = nil;
-                ImprovementBuilder.SetImprovementType(pPlot, self.CampIndex, self.BarbarianID);
-                if (pPlot:GetImprovementType() == self.CampIndex) then 
-                    cX = pPlot:GetX();
-                    cY = pPlot:GetY();
-                    bCampPlaced = true;
-                -- else 
-                --     table.insert(f, plot);
-                end
+        local campType:string = GameInfo.Improvements[self.CampIndex].ImprovementType;
+        print("Found ", #self.CampPlots, " valid plot(s) for ", campType);
+        while (not bCampPlaced and #self.CampPlots > 0) do 
+            local i:number = #self.CampPlots;
+            local pPlot:object = self.CampPlots[i];
+            self.CampPlots[i] = nil;
+            ImprovementBuilder.SetImprovementType(pPlot, self.CampIndex, self.BarbarianID);
+            if (pPlot:GetImprovementType() == self.CampIndex) then 
+                cX = pPlot:GetX();
+                cY = pPlot:GetY();
+                print(cX, cY, campType);
+                bCampPlaced = true;
             end
         end
         if not bCampPlaced then 
             self.NumUnits = self.NumUnits + 2;
+            print(self.X, self.Y, " 'FAILED' to place ", campType);
+            print("Increasing target hostile unit output to ", self.NumUnits);
         elseif bCampPlaced and Players[self.Player]:IsHuman() then 
-            -- local unitName:string = Locale.Lookup(GameInfo.Units[unitType].Name);
             local message:string = HostileVillagers.sNotification;
             local summary:string = Locale.Lookup("LOC_HOSTILE_VILLAGERS_NOTIFICATION_CAMP");
             NotificationManager.SendNotification(self.Player, NotificationTypes.NEW_BARBARIAN_CAMP, message, summary, cX, cY);
         end
     end
-    print("Found ", #self.LandPlots, " valid plot(s) for a land unit");
-    print("Found ", #self.WaterPlots, " valid plot(s) for a naval unit");
-    local class:string = self.PromotionClass;
-    local unitType:string = self:GetEligibleUnit(class);
-    if not unitType then 
-        print(string.format("%s has 'FAILED' prerequisites", class));
-        if (class == "PROMOTION_CLASS_ANTI_CAVALRY") or (class == "PROMOTION_CLASS_HEAVY_CAVALRY") then 
-            class = "PROMOTION_CLASS_MELEE";
-        elseif (class == "PROMOTION_CLASS_LIGHT_CAVALRY") then 
-            class = "PROMOTION_CLASS_RANGED";
-        end
-        unitType = self:GetEligibleUnit(class);
-        if not unitType then 
-            print(string.format("%s has 'FAILED' prerequisites", class));
-            print("Strange things are afoot at the Circle K");
-            return;
-        end 
-    end
-    print(string.format("%s is valid", class));
+    print("Found ", #self.UnitPlots, " valid plot(s) for a unit");
+    print("Found ", self.NumLandPlots, " valid plot(s) for a land unit");
+    print("Found ", self.NumWaterPlots, " valid plot(s) for a naval unit");
+    local unitType:string = "";
     for n = 1, self.NumUnits do 
-        print(self.Era, n, self.NumUnits, unitType);
-        UnitManager.InitUnitValidAdjacentHex(self.BarbarianID, unitType, self.X, self.Y, 1);
-    end
-    if Players[self.Player]:IsHuman() then 
-        local unitName:string = Locale.Lookup(GameInfo.Units[unitType].Name);
-        local message:string = HostileVillagers.sNotification;
-        local summary:string = Locale.Lookup("LOC_HOSTILE_VILLAGERS_NOTIFICATION_UNIT", self.NumUnits, unitName);
-        NotificationManager.SendNotification(self.Player, NotificationTypes.BARBARIANS_SIGHTED, message, summary, self.X, self.Y);
+        local newClass:string = "";
+        local bUnitPlaced:boolean = false;
+        local uX:number = -1;
+        local uY:number = -1;
+        if (#self.UnitPlots < 1) then 
+            print(self.X, self.Y, n, self.NumUnits, " 'FAILED' to locate a valid nearby plot");
+        else 
+            while (not bUnitPlaced and #self.UnitPlots > 0) do 
+                local i:number = (#self.UnitPlots % 2 == 0) and #self.UnitPlots or 1;
+                print(i)
+                local plot:table = self.UnitPlots[i];
+                table.remove(self.UnitPlots, i);
+                uX = plot.X;
+                uY = plot.Y;
+                if not (Map.GetPlot(uX, uY):GetUnitCount() > 0) then 
+                    if plot.IsWater then 
+                        newClass = HostileVillagers.NavalConversion[class];
+                        unitType = self:GetEligibleUnit(newClass);
+                    elseif plot.IsLand then 
+                        unitType = self:GetEligibleUnit(class);
+                    end
+                    if not unitType then 
+                        newClass = HostileVillagers.Fallback[class];
+                        unitType = self:GetEligibleUnit(newClass);
+                        if not unitType then 
+                            print("Strange things are afoot at the Circle K");
+                            return;
+                        end
+                    end
+                    UnitManager.InitUnit(self.BarbarianID, unitType, uX, uY);
+                    if (Map.GetPlot(uX, uY):GetUnitCount() > 0) then 
+                        print(uX, uY, n, self.NumUnits, unitType);
+                        bUnitPlaced = true;
+                    end
+                end
+            end
+            if not bUnitPlaced then 
+                print(self.X, self.Y, n, self.NumUnits, " 'FAILED' to place ", unitType);
+            elseif bUnitPlaced and Players[self.Player]:IsHuman() then 
+                local unitName:string = Locale.Lookup(GameInfo.Units[unitType].Name);
+                local message:string = HostileVillagers.sNotification;
+                local summary:string = Locale.Lookup("LOC_HOSTILE_VILLAGERS_NOTIFICATION_UNIT", 1, unitName);
+                NotificationManager.SendNotification(self.Player, NotificationTypes.BARBARIANS_SIGHTED, message, summary, uX, uY);
+            end
+        end
     end
     return;
 end
@@ -383,36 +411,60 @@ function HostileVillagers:New( t:table )
         local era:number = GameInfo.Eras[row.EraType].Index;
         self[class][era] = GetHostileUnitData(class, era, row);
     end
+    self.NavalConversion = {};
+    print("Configuring Hostile Unit Naval Conversion table . . .");
+    for row in GameInfo.HostileNavalConversion() do 
+        self.NavalConversion[row.PromotionClass] = row.NewPromotionClass;
+        print(string.format("[%s] --> %s", row.PromotionClass, row.NewPromotionClass));
+    end
+    self.Fallback = {};
+    print("Configuring Hostile Unit Fallback Class table . . .");
+    for row in GameInfo.HostileUnitFallback() do 
+        self.NavalConversion[row.PromotionClass] = row.NewPromotionClass;
+        print(string.format("[%s] --> %s", row.PromotionClass, row.NewPromotionClass));
+    end
     return self;
 end
 
 --[[ =========================================================================
 	listener function OnGoodyHutReward() 
-    calls GrantHostileReward() for hostile "rewards"
 =========================================================================== ]]
-function HostileVillagers_OnGoodyHutReward(player, unit, typeHash, subtypeHash) 
-    if (player == -1) then return; end
-    if (unit == -1) then return; end
-    if not HostileVillagers[subtypeHash] then return; end
-    local turn:number = Game.GetCurrentGameTurn();
-    local pUnit:object = UnitManager.GetUnit(player, unit);
-    if not pUnit then 
-        print(string.format("Turn %d: Player %d: Unit %d is 'NOT' valid", turn, player, unit));
-        return;
-    end
-    local plotX:number = pUnit:GetX();
-    local plotY:number = pUnit:GetY();
-    if (plotX < 0 or plotY < 0) then 
-        print(string.format("Turn %d: Player %d: Plot (x %d, y %d) is 'NOT' valid", turn, player, plotX, plotY));
-        return;
-    end
-    local kHostile:table = HostileVillagers[subtypeHash]:GetMembers();
-    kHostile.Turn = turn;
-    kHostile.Player = player;
-    kHostile.Unit = unit;
-    kHostile.X = plotX;
-    kHostile.Y = plotY;
-    return kHostile:Activate();
+function HostileVillagers_OnGoodyHutReward( player:number, unit:number, hash:number, subtype:number ) 
+    -- if (player == -1) then return; end
+    -- if (unit == -1) then return; end
+    -- if not HostileVillagers[subtypeHash] then return; end
+    -- local turn:number = Game.GetCurrentGameTurn();
+    -- local pUnit:object = UnitManager.GetUnit(player, unit);
+    -- if not pUnit then 
+    --     print(string.format("Turn %d: Player %d: Unit %d is 'NOT' valid", turn, player, unit));
+    --     return;
+    -- end
+    -- local plotX:number = pUnit:GetX();
+    -- local plotY:number = pUnit:GetY();
+    -- if (plotX < 0 or plotY < 0) then 
+    --     print(string.format("Turn %d: Player %d: Plot (x %d, y %d) is 'NOT' valid", turn, player, plotX, plotY));
+    --     return;
+    -- end
+    -- local kHostile:table = HostileVillagers[subtypeHash]:GetMembers();
+    -- kHostile.Turn = turn;
+    -- kHostile.Player = player;
+    -- kHostile.Unit = unit;
+    -- kHostile.X = plotX;
+    -- kHostile.Y = plotY;
+    -- return kHostile:Activate();
+    print("GoodyHutReward ", player, unit, hash, subtype);
+    return;
+end
+
+--[[ =========================================================================
+	listener function OnImprovementActivated() 
+=========================================================================== ]]
+function HostileVillagers_OnImprovementActivated( x:number, y:number, player:number, unit:number, improvement:number, owner:number, activation:number ) 
+    local bIsCamp:boolean = (improvement == g_iBarbCampIndex);
+    local bIsHut:boolean = (improvement == g_iGoodyHutIndex);
+    if not bIsHut then return; end
+    print("ImprovementActivated ", x, y, player, unit, improvement, owner, activation);
+    return;
 end
 
 --[[ =========================================================================
@@ -425,16 +477,17 @@ function HostileVillagers_Initialize()
     ExposedMembers.HostileVillagers = HostileVillagers;
     print("Configuring ingame Event listeners . . .");
     Events.GoodyHutReward.Add(HostileVillagers_OnGoodyHutReward);
-    print("Clearing temporary variables . . .");
-    g_sNotification = nil;
-    g_sRowOfDashes = nil;
-    g_sRuleset = nil;
-    g_bIsNotStandard = nil;
-    g_bNoBarbarians = nil;
-    g_bNoGoodyHuts = nil;
-    g_iBarbarianID = nil;
-    g_iBarbCampIndex = nil;
-    g_iGoodyHutIndex = nil;
+    Events.ImprovementActivated.Add(HostileVillagers_OnImprovementActivated);
+    -- print("Clearing temporary variables . . .");
+    -- g_sNotification = nil;
+    -- g_sRowOfDashes = nil;
+    -- g_sRuleset = nil;
+    -- g_bIsNotStandard = nil;
+    -- g_bNoBarbarians = nil;
+    -- g_bNoGoodyHuts = nil;
+    -- g_iBarbarianID = nil;
+    -- g_iBarbCampIndex = nil;
+    -- g_iGoodyHutIndex = nil;
     print("Initialization complete");
     return;
 end

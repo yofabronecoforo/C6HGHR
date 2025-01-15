@@ -29,6 +29,20 @@ CREATE TABLE IF NOT EXISTS HostileRewardMembers (
     PRIMARY KEY('Name')
 );
 
+-- 
+CREATE TABLE IF NOT EXISTS HostileUnitFallback (
+    'PromotionClass' TEXT, 
+    'NewPromotionClass' TEXT, 
+    PRIMARY KEY('PromotionClass')
+);
+
+-- 
+CREATE TABLE IF NOT EXISTS HostileNavalConversion (
+    'PromotionClass' TEXT, 
+    'NewPromotionClass' TEXT, 
+    PRIMARY KEY('PromotionClass')
+);
+
 /* ===========================================================================
     End ingame schema setup
 =========================================================================== */

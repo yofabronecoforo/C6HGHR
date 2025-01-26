@@ -7,6 +7,26 @@
 =========================================================================== ]]
 print("Loading gameplay script HostileVillagers.lua . . .");
 
+local g_sRuleset:string = GameConfiguration.GetValue("RULESET");
+
+local g_iLoggingLevel:number = GameConfiguration.GetValue("GAME_ECFE_LOGGING") or -1;
+g_iLoggingLevel = 3;
+local vprint = (g_iLoggingLevel > 2) and print or function (s, ...) return; end;
+
+--[[ =========================================================================
+	function IsExpansionRuleset() 
+=========================================================================== ]]
+function IsExpansionRuleset() 
+    return (g_sRuleset ~= "RULESET_STANDARD");
+end
+
+--[[ =========================================================================
+	function IsStandardRuleset() 
+=========================================================================== ]]
+function IsStandardRuleset() 
+    return (g_sRuleset == "RULESET_STANDARD");
+end
+
 --[[ =========================================================================
 	function AbortInit() 
     should be called when any of the below pre-init checks fail
@@ -17,94 +37,74 @@ function AbortInit()
 end
 
 --[[ =========================================================================
-	pre-init abort gauntlet
+	pre-init 
 =========================================================================== ]]
 local g_iBarbarianID:number = -1;
 for _, pPlayer in ipairs(Game.GetPlayers()) do 
-    if pPlayer:IsBarbarian() then 
-        g_iBarbarianID = pPlayer:GetID();
-        print(string.format("Barbarian Player ID is %d", g_iBarbarianID));
-    end
+    if pPlayer:IsBarbarian() then g_iBarbarianID = pPlayer:GetID(); end
 end
-if (g_iBarbarianID == -1) then 
-    print("'FAILED' to identify the Barbarian Player ID");
-    return AbortInit();
-end
+print("Barbarian Player ID:", g_iBarbarianID);
+if (g_iBarbarianID == -1) then return AbortInit(); end
 
 local g_bNoBarbarians:boolean = GameConfiguration.GetValue("GAME_NO_BARBARIANS");
-print(string.format("'No Barbarians' is %s", tostring(g_bNoBarbarians)));
+print("'No Barbarians':", g_bNoBarbarians);
 if g_bNoBarbarians then return AbortInit(); end
 
-local g_iBarbCampIndex:number = GameInfo.Improvements["IMPROVEMENT_BARBARIAN_CAMP"].Index;
-if not g_iBarbCampIndex then 
-    print("Barbarian Outpost is 'NOT' present in GameInfo.Improvements");
-    return AbortInit();
-else 
-    print(string.format("Barbarian Outpost is GameInfo.Improvements[%d]", g_iBarbCampIndex));
-end
+local g_sCampType:string = "IMPROVEMENT_BARBARIAN_CAMP";
+local g_iCampIndex:number = GameInfo.Improvements[g_sCampType].Index or -1;
+print(string.format("GameInfo.Improvements[%s]: %d", g_sCampType, g_iCampIndex));
+if (g_iCampIndex < 0) then return AbortInit(); end
 
 local g_bNoGoodyHuts:boolean = GameConfiguration.GetValue("GAME_NO_GOODY_HUTS");
-print(string.format("'No Tribal Villages' is %s", tostring(g_bNoGoodyHuts)));
+print("'No Tribal Villages':", g_bNoGoodyHuts);
 if g_bNoGoodyHuts then return AbortInit(); end
 
-local g_iGoodyHutIndex:number = GameInfo.Improvements["IMPROVEMENT_GOODY_HUT"].Index;
-if not g_iGoodyHutIndex then 
-    print("Tribal Village is 'NOT' present in GameInfo.Improvements");
-    return AbortInit();
-else 
-    print(string.format("Tribal Village is GameInfo.Improvements[%d]", g_iGoodyHutIndex));
-end
+local g_sHutType:string = "IMPROVEMENT_GOODY_HUT";
+local g_iHutIndex:number = GameInfo.Improvements[g_sHutType].Index or -1;
+print(string.format("GameInfo.Improvements[%s]: %d", g_sHutType, g_iHutIndex));
+if (g_iHutIndex < 0) then return AbortInit(); end
 
 local g_sNotification:string = Locale.Lookup("LOC_HOSTILE_VILLAGERS_NOTIFICATION_TITLE");
 local g_sRowOfDashes:string = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
-local g_sRuleset:string = GameConfiguration.GetValue("RULESET");
-local g_bIsNotStandard:boolean = (g_sRuleset ~= "RULESET_STANDARD");
+
+local g_kGoodyHuts:table = {};
+local g_kGoodyPlots:table = {};
+local g_kStrategicResources:table = {};
+local g_kNavalConversion:table = {};
+local g_kFallbackClasses:table = {};
 
 --[[ =========================================================================
 	table HostileVillagers 
 =========================================================================== ]]
+print("Configuring Hostile Unit lookup table . . .");
 local HostileVillagers:table = {};
-HostileVillagers.__index = HostileVillagers;
-setmetatable(HostileVillagers, {
-    __call = function (class, t) 
-        local self:table = setmetatable({}, class);
-        self.__index = self;
-        return self:New(t);
-    end, 
-});
+for row in GameInfo.HostileVillagerUnits() do 
+    local class:string = row.PromotionClass;
+    HostileVillagers[class] = HostileVillagers[class] or {};
+    local era:number = GameInfo.Eras[row.EraType].Index;
+    local unitType:string = row.UnitType;
+    local kUnit:table = GameInfo.Units[unitType];
+    local tech:string = kUnit.PrereqTech;
+    local resource:string = kUnit.StrategicResource;
+    local t:table = {};
+    t.Class = class;
+    t.EraType = row.EraType;
+    t.UnitType = unitType;
+    t.Tech = tech and GameInfo.Technologies[tech].Index or -1;
+    t.Resource = resource and GameInfo.Resources[resource].Index or -1;
+    HostileVillagers[class][era] = t;
+end
 
 --[[ =========================================================================
-	function 
+	function StrangeThings() 
 =========================================================================== ]]
-function GetAdjacentPlotsInRadius( self:table, x:number, y:number, r:number, e:number ) 
-    x = (x and x >= 0) and x or (self.X and self.X >= 0) and self.X or 0;
-    y = (y and y >= 0) and y or (self.Y and self.Y >= 0) and self.Y or 0;
-    r = (r and r > 1) and r or (self.Radius and self.Radius > 1) and self.Radius or 1;
-    e = (e and e > 0 and e < r) and e or (self.ExcludeRadius and self.ExcludeRadius > 0 and self.ExcludeRadius < r) and self.ExcludeRadius or 0;
-    local pPlot:object = nil;
-    local p:number = -1;
-    local plots:table = {};
-    local exclude:table = { [Map.GetPlot(x, y)] = true };
-    if (e > 0) then 
-        for eX = (e * -1), e do 
-            for eY = (e * -1), e do 
-                pPlot = Map.GetPlotXYWithRangeCheck(x, y, eX, eY, e);
-                if pPlot then 
-                    exclude[pPlot] = true;
-                end
-            end
-        end
+function StrangeThings( s:string ) 
+    local msg:string = "Strange things are afoot at the Circle K";
+    if s and s ~= nil then 
+        msg = string.format("%s: %s", msg, s);
     end
-    for rX = (r * -1), r do 
-        for rY = (r * -1), r do 
-            pPlot = Map.GetPlotXYWithRangeCheck(x, y, rX, rY, r);
-            if (pPlot and not exclude[pPlot]) then 
-                p = #plots + 1;
-                plots[p] = pPlot;
-            end
-        end
-    end
-    return plots;
+    print(msg);
+    return;
 end
 
 --[[ =========================================================================
@@ -124,99 +124,132 @@ end
 --[[ =========================================================================
 	function 
 =========================================================================== ]]
-function ValidatePlots( self:table ) 
-    self.NearbyResources = {};
-    self.CampPlots = {};
-    self.UnitPlots = {};
-    self.NumLandPlots = 0;
-    self.NumWaterPlots = 0;
-    local bHasNoResources:boolean = false;
+function GetPlotsWithImprovement( i:number ) 
+    local gridWidth:number = 0;
+    local gridHeight:number = 0;
+    gridWidth, gridHeight = Map.GetGridSize();
+    local numMapPlots:number = gridWidth * gridHeight;
+    local pPlot:object = nil;
+    local plots:table = {};
     local p:number = 0;
-    for _, pPlot in ipairs(self.NearbyPlots) do 
-        bHasNoResources = (pPlot:GetResourceType() == -1);
-        if not bHasNoResources then 
-            for _, i in ipairs(HostileVillagers.StrategicResources) do 
-                if not self.NearbyResources[i] then 
-                    if (pPlot:GetResourceType() == i) then 
-                        self.NearbyResources[i] = true;
-                        -- print(GameInfo.Resources[i].ResourceType, " is located nearby");
+    for n = 0, (numMapPlots - 1), 1 do 
+        pPlot = Map.GetPlotByIndex(n);
+        if (pPlot:GetImprovementType() == i) then 
+            p = p + 1;
+            plots[p] = pPlot;
+        end
+    end
+    return plots;
+end
+
+--[[ =========================================================================
+	function GetPlotsWithGoodyHut() 
+    this is a wrapper for GetPlotsWithImprovement(g_iHutIndex)
+    returns: 
+        a table of all plots which contain IMPROVEMENT_GOODY_HUT
+=========================================================================== ]]
+function GetPlotsWithGoodyHut() 
+    return GetPlotsWithImprovement(g_iHutIndex);
+end
+
+--[[ =========================================================================
+	function 
+=========================================================================== ]]
+function GetAdjacentPlotData( pTargetPlot:object, i:number, r:number ) 
+    local exclude:table = { [pTargetPlot] = true };
+    local x:number = pTargetPlot:GetX();
+    local y:number = pTargetPlot:GetY();
+    local resources:table = {};
+    local n:number = 0;
+    local ring:table = {};
+    local camp:table = {};
+    local unit:table = {};
+    for l = 1, r do 
+        ring[l] = Map.GetRingPlots(x, y, l);
+        for _, pPlot in ipairs(ring[l]) do 
+            for _, s in ipairs(g_kStrategicResources) do 
+                resources[s] = resources[s] or {};
+                if (pPlot:GetResourceType() == s) then 
+                    n = #resources[s] + 1;
+                    resources[s][n] = pPlot;
+                    if l > 1 then 
+                        exclude[pPlot] = true;
                     end
                 end
             end
-        end
-        if not pPlot:IsImpassable() and not pPlot:IsNaturalWonder() then 
-            if not pPlot:IsMountain() and not pPlot:IsLake() then 
-                if (pPlot:GetUnitCount() == 0) then 
-                    if self.Outpost and bHasNoResources then 
-                        if IsValidPlotForImprovement(pPlot, self.CampIndex) then 
-                            p = #self.CampPlots + 1;
-                            self.CampPlots[p] = pPlot;
+            if not pPlot:IsImpassable() and not pPlot:IsMountain() then 
+                if not pPlot:IsNaturalWonder() and not pPlot:IsLake() then 
+                    if (l == 1) then 
+                        n = #unit + 1;
+                        unit[n] = pPlot;
+                    elseif (l == 2 and not exclude[pPlot]) then 
+                        if (pPlot:GetResourceType() == -1) then 
+                            if IsValidPlotForImprovement(pPlot, g_iCampIndex) then 
+                                n = #camp + 1;
+                                camp[n] = pPlot;
+                            end
                         end
                     end
-                    p = #self.UnitPlots + 1;
-                    local plot:table = {};
-                    plot.X = pPlot:GetX();
-                    plot.Y = pPlot:GetY();
-                    plot.IsLand = not pPlot:IsWater();
-                    plot.IsWater = pPlot:IsWater();
-                    if plot.IsLand then 
-                        self.NumLandPlots = self.NumLandPlots + 1;
-                    elseif plot.IsWater then 
-                        self.NumWaterPlots = self.NumWaterPlots + 1;
-                    end
-                    self.UnitPlots[p] = plot;
                 end
             end
         end
     end
+    local t:table = {};
+    t.X = x;
+    t.Y = y;
+    t.Exclude = exclude;
+    t.Ring = ring;
+    t.Camp = camp;
+    t.Unit = unit;
+    t.Index = i;
+    t.Resources = resources;
+    return t;
 end
 
 --[[ =========================================================================
-	function 
+	Hostile Rewards 
 =========================================================================== ]]
-function GetEligibleUnit( self:table, class:string ) 
-    class = class and class or self.PromotionClass and self.PromotionClass or "PROMOTION_CLASS_MELEE";
-    local kUnits:table = HostileVillagers[class];
-    local pPlayer:object = Players[self.BarbarianID];
-    local pPlayerTechs:object = pPlayer:GetTechs();
-    for e = self.Era, 0, -1 do 
-        local kUnit:table = kUnits[e];
-        local unitType:string = kUnit.UnitType;
-        local t:number = kUnit.Tech;
-        local r:number = kUnit.Resource;
-        if (t == -1) then 
-            -- print(unitType, " no tech ", " is valid");
-            return unitType;
-        elseif pPlayerTechs:HasTech(t) then 
-            if (r == -1) then 
-                -- print(unitType, t, " no resource ", " is valid");
-                return unitType;
-            else 
-                if self.NearbyResources[r] then 
-                    -- print(unitType, t, r,  " is valid");
-                    return unitType;
-                end
-            end
-        end
+print("Configuring Hostile 'Reward' hash lookup table . . .");
+local HostileRewards:table = {};
+for row in GameInfo.GoodyHutSubTypes() do 
+    if (row.GoodyHut == "GOODYHUT_HOSTILES") then 
+        local subtype:string = row.SubTypeGoodyHut;
+        local hash:number = DB.MakeHash(subtype);
+        HostileRewards[hash] = row;
+        -- vprint(string.format("[%d] = ", hash), subtype);
     end
-    -- print(class, " is 'NOT' valid");
-    return nil;
 end
+
+local HostileReward:table = {};
+HostileReward.__index = HostileReward;
+setmetatable(HostileReward, {
+    __call = function (meta, hash, t) 
+        local self:table = setmetatable({}, meta);
+        self.__index = self;
+        return self:New(hash, t);
+    end, 
+});
 
 --[[ =========================================================================
 	function 
 =========================================================================== ]]
-function LogMembers( self:table ) 
+function HostileReward:New( hash:number, t:table ) 
+    local h:table = GameInfo.GoodyHutSubTypes_HGHR[t.SubTypeGoodyHut];
     for row in GameInfo.HostileRewardMembers() do 
-        print(row.Name, self[row.Name]);
+        if t[row.Name] then 
+            self[row.Name] = t[row.Name];
+        elseif h[row.Name] then 
+            self[row.Name] = h[row.Name];
+        end
     end
-    return;
+    self.Hash = hash;
+    return self;
 end
 
 --[[ =========================================================================
 	function 
 =========================================================================== ]]
-function GetMembers( self:table ) 
+function HostileReward:Copy() 
     local t:table = {};
     for row in GameInfo.HostileRewardMembers() do 
         t[row.Name] = self[row.Name];
@@ -227,243 +260,255 @@ end
 --[[ =========================================================================
 	function 
 =========================================================================== ]]
-function Activate( self:table ) 
-    self.Era = HostileVillagers.bIsNotStandard and Game.GetEras():GetCurrentEra() or Players[self.BarbarianID]:GetEras():GetEra();
-    self.Radius = 2;
-    print(self.X, self.Y, self.Hash, self.SubTypeGoodyHut);
+function HostileReward:GetPromotionClass() 
     local class:string = self.PromotionClass;
-    self.NearbyPlots = self:GetAdjacentPlotsInRadius();
-    print("Found ", #self.NearbyPlots, " valid nearby plot(s)");
-    self:ValidatePlots();
-    local bCampPlaced:boolean = false;
-    if self.Outpost then 
-        local cX:number = -1;
-        local cY:number = -1;
-        local campType:string = GameInfo.Improvements[self.CampIndex].ImprovementType;
-        print("Found ", #self.CampPlots, " valid plot(s) for ", campType);
-        while (not bCampPlaced and #self.CampPlots > 0) do 
-            local i:number = #self.CampPlots;
-            local pPlot:object = self.CampPlots[i];
-            self.CampPlots[i] = nil;
-            ImprovementBuilder.SetImprovementType(pPlot, self.CampIndex, self.BarbarianID);
-            if (pPlot:GetImprovementType() == self.CampIndex) then 
-                cX = pPlot:GetX();
-                cY = pPlot:GetY();
-                print(cX, cY, campType);
-                bCampPlaced = true;
+    return class;
+end
+
+--[[ =========================================================================
+	function 
+=========================================================================== ]]
+function HostileReward:GetEligibleUnit( class:string ) 
+    class = class and class or self.PromotionClass and self.PromotionClass or "PROMOTION_CLASS_MELEE";
+    print(class, self.Era);
+    local pPlayer:object = Players[g_iBarbarianID];
+    local pPlayerTechs:object = pPlayer:GetTechs();
+    for e = self.Era, 0, -1 do 
+        local kUnit:table = HostileVillagers[class][e];
+        local unitType:string = kUnit.UnitType;
+        local t:number = kUnit.Tech;
+        local r:number = kUnit.Resource;
+        if (t == -1) then 
+            return unitType;
+        elseif pPlayerTechs:HasTech(t) then 
+            if (r == -1) then 
+                return unitType;
+            else 
+                if self.NearbyResources[r] then 
+                    return unitType;
+                end
             end
         end
-        if not bCampPlaced then 
-            self.NumUnits = self.NumUnits + 2;
-            print(self.X, self.Y, " 'FAILED' to place ", campType);
-            print("Increasing target hostile unit output to ", self.NumUnits);
-        elseif bCampPlaced and Players[self.Player]:IsHuman() then 
-            local message:string = HostileVillagers.sNotification;
-            local summary:string = Locale.Lookup("LOC_HOSTILE_VILLAGERS_NOTIFICATION_CAMP");
-            NotificationManager.SendNotification(self.Player, NotificationTypes.NEW_BARBARIAN_CAMP, message, summary, cX, cY);
+    end
+    return nil;
+end
+
+--[[ =========================================================================
+	function 
+=========================================================================== ]]
+function HostileReward:PlaceCamp( plots:table ) 
+    local remove:table = {};
+    local r:number = 0;
+    vprint("Verifying", #plots, "identified plots . . .");
+    for i, pPlot in ipairs(plots) do 
+        if (pPlot:GetUnitCount() ~= 0) then 
+            r = r + 1;
+            remove[r] = i;
+        else 
+            if (pPlot:GetResourceType() ~= -1) then 
+                r = r + 1;
+                remove[r] = i;
+            else 
+                if not IsValidPlotForImprovement(pPlot, g_iCampIndex) then 
+                    r = r + 1;
+                    remove[r] = i;
+                end
+            end
         end
     end
-    print("Found ", #self.UnitPlots, " valid plot(s) for a unit");
-    print("Found ", self.NumLandPlots, " valid plot(s) for a land unit");
-    print("Found ", self.NumWaterPlots, " valid plot(s) for a naval unit");
+    if (r > 0) then 
+        for i = r, 1, -1 do 
+            table.remove(plots, remove[i]);
+        end
+    end
+    vprint(#plots, "valid plots remain for", g_sCampType);
+    if (#plots < 1) then 
+        vprint("Increasing hostile unit output");
+        return 2;
+    end
+    local bCampPlaced:boolean = false;
+    local numAttempts:number = 0;
+    local cX:number = -1;
+    local cY:number = -1;
+    while (not bCampPlaced and #plots > 0) do 
+        numAttempts = numAttempts + 1;
+        local i:number = #plots;
+        local pPlot:object = plots[i];
+        plots[i] = nil;
+        ImprovementBuilder.SetImprovementType(pPlot, g_iCampIndex, g_iBarbarianID);
+        if (pPlot:GetImprovementType() == g_iCampIndex) then 
+            cX = pPlot:GetX();
+            cY = pPlot:GetY();
+            bCampPlaced = true;
+            vprint(cX, cY, g_sCampType, bCampPlaced, numAttempts);
+        end
+    end
+    if not bCampPlaced then 
+        vprint(self.X, self.Y, g_sCampType, bCampPlaced, numAttempts);
+        vprint("Increasing hostile unit output");
+        return 2;
+    elseif bCampPlaced and Players[self.Player]:IsHuman() then 
+        local message:string = g_sNotification;
+        local summary:string = Locale.Lookup("LOC_HOSTILE_VILLAGERS_NOTIFICATION_CAMP");
+        NotificationManager.SendNotification(self.Player, NotificationTypes.NEW_BARBARIAN_CAMP, message, summary, cX, cY);
+    end
+    return 0;
+end
+
+--[[ =========================================================================
+	function 
+=========================================================================== ]]
+function HostileReward:PlaceUnits( plots:table, num:number ) 
+    local numLandPlots:number = 0;
+    local numWaterPlots:number = 0;
+    local remove:table = {};
+    local r:number = 0;
+    vprint("Verifying", #plots, "identified plots . . .");
+    for i, pPlot in ipairs(plots) do 
+        if (pPlot:GetUnitCount() == 0) then 
+            if not pPlot:IsWater() then 
+                numLandPlots = numLandPlots + 1;
+            elseif pPlot:IsWater() then 
+                numWaterPlots = numWaterPlots + 1;
+            end
+        else 
+            r = r + 1;
+            remove[r] = i;
+        end
+    end
+    if (r > 0) then 
+        for i = r, 1, -1 do 
+            table.remove(plots, remove[i]);
+        end
+    end
+    vprint(#plots, "valid plots remain for a unit");
+    if (#plots < 1) then 
+        return;
+    end
+    vprint(numLandPlots, "plots are valid for a land unit");
+    vprint(numWaterPlots, "plots are valid for a naval unit");
+    local class:string = self:GetPromotionClass();
     local unitType:string = "";
     for n = 1, self.NumUnits do 
         local newClass:string = "";
         local bUnitPlaced:boolean = false;
+        local numAttempts:number = 0;
         local uX:number = -1;
         local uY:number = -1;
-        if (#self.UnitPlots < 1) then 
-            print(self.X, self.Y, n, self.NumUnits, " 'FAILED' to locate a valid nearby plot");
-        else 
-            while (not bUnitPlaced and #self.UnitPlots > 0) do 
-                local i:number = (#self.UnitPlots % 2 == 0) and #self.UnitPlots or 1;
-                print(i)
-                local plot:table = self.UnitPlots[i];
-                table.remove(self.UnitPlots, i);
-                uX = plot.X;
-                uY = plot.Y;
-                if not (Map.GetPlot(uX, uY):GetUnitCount() > 0) then 
-                    if plot.IsWater then 
-                        newClass = HostileVillagers.NavalConversion[class];
-                        unitType = self:GetEligibleUnit(newClass);
-                    elseif plot.IsLand then 
-                        unitType = self:GetEligibleUnit(class);
-                    end
-                    if not unitType then 
-                        newClass = HostileVillagers.Fallback[class];
-                        unitType = self:GetEligibleUnit(newClass);
-                        if not unitType then 
-                            print("Strange things are afoot at the Circle K");
-                            return;
-                        end
-                    end
-                    UnitManager.InitUnit(self.BarbarianID, unitType, uX, uY);
-                    if (Map.GetPlot(uX, uY):GetUnitCount() > 0) then 
-                        print(uX, uY, n, self.NumUnits, unitType);
-                        bUnitPlaced = true;
-                    end
+        while (not bUnitPlaced and #plots > 0) do 
+            numAttempts = numAttempts + 1;
+            local i:number = (#plots % 2 == 0) and #plots or 1;
+            local pPlot:object = plots[i];
+            table.remove(plots, i);
+            uX = pPlot:GetX();
+            uY = pPlot:GetY();
+            if not pPlot:IsWater() then 
+                unitType = self:GetEligibleUnit(class);
+            elseif pPlot:IsWater() then 
+                newClass = g_kNavalConversion[class];
+                unitType = self:GetEligibleUnit(newClass);
+            end
+            if not unitType then 
+                newClass = g_kFallbackClasses[class];
+                unitType = self:GetEligibleUnit(newClass);
+                if not unitType then 
+                    return StrangeThings();
                 end
             end
-            if not bUnitPlaced then 
-                print(self.X, self.Y, n, self.NumUnits, " 'FAILED' to place ", unitType);
-            elseif bUnitPlaced and Players[self.Player]:IsHuman() then 
-                local unitName:string = Locale.Lookup(GameInfo.Units[unitType].Name);
-                local message:string = HostileVillagers.sNotification;
-                local summary:string = Locale.Lookup("LOC_HOSTILE_VILLAGERS_NOTIFICATION_UNIT", 1, unitName);
-                NotificationManager.SendNotification(self.Player, NotificationTypes.BARBARIANS_SIGHTED, message, summary, uX, uY);
+            UnitManager.InitUnit(g_iBarbarianID, unitType, uX, uY);
+            if (pPlot:GetUnitCount() > 0) then 
+                bUnitPlaced = true;
+                vprint(uX, uY, n, self.NumUnits, unitType, bUnitPlaced, numAttempts);
             end
         end
+        if not bUnitPlaced then 
+            vprint(self.X, self.Y, n, self.NumUnits, unitType, bUnitPlaced, numAttempts);
+        elseif bUnitPlaced and Players[self.Player]:IsHuman() then 
+            local unitName:string = Locale.Lookup(GameInfo.Units[unitType].Name);
+            local message:string = g_sNotification;
+            local summary:string = Locale.Lookup("LOC_HOSTILE_VILLAGERS_NOTIFICATION_UNIT", 1, unitName);
+            NotificationManager.SendNotification(self.Player, NotificationTypes.BARBARIANS_SIGHTED, message, summary, uX, uY);
+        end
+    end
+end
+
+--[[ =========================================================================
+	function 
+=========================================================================== ]]
+function HostileReward:Activate() 
+    print(self.Activate, self.SubTypeGoodyHut);
+    self.Era = IsExpansionRuleset() and Game.GetEras():GetCurrentEra() or Players[g_iBarbarianID]:GetEras():GetEra();
+    local pThisPlot:object = Map.GetPlot(self.X, self.Y);
+    if pThisPlot and g_kGoodyPlots[pThisPlot] then 
+        local t:table = g_kGoodyPlots[pThisPlot];
+        vprint(self.X, self.Y, "is Index", t.Index, "in the global tracker");
+        local bNearbyHorses:boolean = false;
+        for _, r in ipairs(g_kStrategicResources) do 
+            if #t.Resources[r] > 0 then 
+                local resource:string = GameInfo.Resources[r].ResourceType;
+                vprint(resource, "in", #t.Resources[r], "plots within", #t.Ring, "plots");
+                if (resource == "RESOURCE_HORSES") then 
+                    bNearbyHorses = true;
+                end
+            end
+        end
+        if self.Outpost then 
+            vprint(#t.Camp, "identified plots are valid for", g_sCampType);
+            if (#t.Camp < 1) then 
+                vprint("Increasing hostile unit output");
+                self.NumUnits = self.NumUnits + 2;
+            else 
+                self.NumUnits = self.NumUnits + self:PlaceCamp(t.Camp);
+            end
+        end
+        vprint(#t.Unit, "identified plots are valid for a unit");
+        if (#t.Unit < 1) then 
+            return;
+        end
+        self:PlaceUnits(t.Unit);
+    else 
+        vprint(self.X, self.Y, " is 'NOT' in the global tracker");
     end
     return;
-end
-
---[[ =========================================================================
-	function GetHostileRewardData() 
-    does exactly what it says on the tin
-=========================================================================== ]]
-function GetHostileRewardData( hash:number, t:table ) 
-    local reward:table = {};
-    local hghr:table = GameInfo.GoodyHutSubTypes_HGHR[t.SubTypeGoodyHut];
-    for row in GameInfo.HostileRewardMembers() do 
-        if t[row.Name] then 
-            reward[row.Name] = t[row.Name];
-        elseif hghr[row.Name] then 
-            reward[row.Name] = hghr[row.Name];
-        end
-    end
-    reward.Hash = hash;
-    reward.CampIndex = g_iBarbCampIndex;
-    reward.BarbarianID = g_iBarbarianID;
-    reward.GetAdjacentPlotsInRadius = GetAdjacentPlotsInRadius;
-    reward.LogMembers = LogMembers;
-    reward.GetMembers = GetMembers;
-    reward.ValidatePlots = ValidatePlots;
-    reward.GetEligibleUnit = GetEligibleUnit;
-    reward.Activate = Activate;
-    print(string.format("[%d] = %s (%s, %d)", hash, tostring(reward.Activate), reward.SubTypeGoodyHut, reward.Weight));
-    return reward;
-end
-
---[[ =========================================================================
-	function GetHostileUnitData() 
-    does exactly what it says on the tin
-=========================================================================== ]]
-function GetHostileUnitData( class:string, era:number, t:table ) 
-    local tech:string = GameInfo.Units[t.UnitType].PrereqTech;
-    t.Tech = tech and GameInfo.Technologies[tech].Index or -1;
-    local resource:string = GameInfo.Units[t.UnitType].StrategicResource;
-    t.Resource = resource and GameInfo.Resources[resource].Index or -1;
-    print(string.format("[%s][%d] = {%s, %d, %d}", class, era, t.UnitType, t.Tech, t.Resource));
-    return t;
-end
-
---[[ =========================================================================
-	function New() 
-    creates a HostileVillagers object with the necessary members
-    returns:
-        the newly created HostileVillagers object
-=========================================================================== ]]
-function HostileVillagers:New( t:table ) 
-    -- this probably isn't necessary
-    t = t or {};
-    -- functions
-    self.GetHostileRewardData = GetHostileRewardData;
-    self.GetHostileUnitData = GetHostileUnitData;
-    self.GrantHostileReward = GrantHostileReward;
-    self.IsResourceInNearbyPlot = IsResourceInNearbyPlot;
-    self.GetEligibleUnit = GetEligibleUnit;
-    -- strings
-    self.sNotification = g_sNotification;
-    self.sRowOfDashes = g_sRowOfDashes;
-    self.sRuleset = g_sRuleset;
-    -- booleans
-    self.bIsNotStandard = g_bIsNotStandard;
-    self.bNoBarbarians = g_bNoBarbarians;
-    self.bNoGoodyHuts = g_bNoGoodyHuts;
-    -- integers
-    self.iBarbarianID = g_iBarbarianID;
-    self.iBarbCampIndex = g_iBarbCampIndex;
-    self.iGoodyHutIndex = g_iGoodyHutIndex;
-    -- tables
-    self.StrategicResources = {};
-    local i:number = -1;
-    print("Configuring Strategic Resource lookup table . . .");
-    for row in GameInfo.Resources() do 
-        if row.ResourceClassType == "RESOURCECLASS_STRATEGIC" then 
-            i = #self.StrategicResources + 1;
-            self.StrategicResources[i] = row.Index;
-            print(string.format("[%d] = %s (%d)", i, row.ResourceType, row.Index));
-        end
-    end
-    print("Configuring Hostile 'Reward' hash table(s) . . .");
-    for row in GameInfo.GoodyHutSubTypes() do 
-        local hash:number = DB.MakeHash(row.SubTypeGoodyHut);
-        if (row.GoodyHut == "GOODYHUT_HOSTILES") then 
-            self[hash] = GetHostileRewardData(hash, row);
-        -- else 
-        --     self.NonHostileRewards[hash] = row;
-        end
-    end
-    print("Configuring Hostile Unit lookup table . . .");
-    for row in GameInfo.HostileVillagerUnits() do 
-        local class:string = row.PromotionClass;
-        self[class] = self[class] or {};
-        local era:number = GameInfo.Eras[row.EraType].Index;
-        self[class][era] = GetHostileUnitData(class, era, row);
-    end
-    self.NavalConversion = {};
-    print("Configuring Hostile Unit Naval Conversion table . . .");
-    for row in GameInfo.HostileNavalConversion() do 
-        self.NavalConversion[row.PromotionClass] = row.NewPromotionClass;
-        print(string.format("[%s] --> %s", row.PromotionClass, row.NewPromotionClass));
-    end
-    self.Fallback = {};
-    print("Configuring Hostile Unit Fallback Class table . . .");
-    for row in GameInfo.HostileUnitFallback() do 
-        self.NavalConversion[row.PromotionClass] = row.NewPromotionClass;
-        print(string.format("[%s] --> %s", row.PromotionClass, row.NewPromotionClass));
-    end
-    return self;
 end
 
 --[[ =========================================================================
 	listener function OnGoodyHutReward() 
 =========================================================================== ]]
-function HostileVillagers_OnGoodyHutReward( player:number, unit:number, hash:number, subtype:number ) 
-    -- if (player == -1) then return; end
-    -- if (unit == -1) then return; end
-    -- if not HostileVillagers[subtypeHash] then return; end
-    -- local turn:number = Game.GetCurrentGameTurn();
-    -- local pUnit:object = UnitManager.GetUnit(player, unit);
-    -- if not pUnit then 
-    --     print(string.format("Turn %d: Player %d: Unit %d is 'NOT' valid", turn, player, unit));
-    --     return;
-    -- end
-    -- local plotX:number = pUnit:GetX();
-    -- local plotY:number = pUnit:GetY();
-    -- if (plotX < 0 or plotY < 0) then 
-    --     print(string.format("Turn %d: Player %d: Plot (x %d, y %d) is 'NOT' valid", turn, player, plotX, plotY));
-    --     return;
-    -- end
-    -- local kHostile:table = HostileVillagers[subtypeHash]:GetMembers();
-    -- kHostile.Turn = turn;
-    -- kHostile.Player = player;
-    -- kHostile.Unit = unit;
-    -- kHostile.X = plotX;
-    -- kHostile.Y = plotY;
-    -- return kHostile:Activate();
-    print("GoodyHutReward ", player, unit, hash, subtype);
-    return;
+function HostileVillagers_OnGoodyHutReward( player:number, unit:number, goodyhut:number, subtype:number ) 
+    if not HostileRewards[subtype] then return; end
+    print(player, unit, goodyhut, subtype);
+    if (player == -1) then 
+        return StrangeThings("player = -1");
+    end
+    if (unit == -1) then 
+        return StrangeThings("unit = -1");
+    end
+    local pUnit:object = UnitManager.GetUnit(player, unit);
+    if not pUnit then 
+        return StrangeThings(string.format("unit %d for player %d is invalid", unit, player));
+    end
+    local plotX:number = pUnit:GetX();
+    local plotY:number = pUnit:GetY();
+    if (plotX < 0 or plotY < 0) then 
+        return StrangeThings(string.format("plot (x %d, y %d) is invalid", plotX, plotY));
+    end
+    local reward:table = HostileReward(subtype, HostileRewards[subtype]);
+    reward.Player = player;
+    reward.Unit = unit;
+    reward.X = plotX;
+    reward.Y = plotY;
+    return reward:Activate();
 end
 
 --[[ =========================================================================
 	listener function OnImprovementActivated() 
 =========================================================================== ]]
 function HostileVillagers_OnImprovementActivated( x:number, y:number, player:number, unit:number, improvement:number, owner:number, activation:number ) 
-    local bIsCamp:boolean = (improvement == g_iBarbCampIndex);
-    local bIsHut:boolean = (improvement == g_iGoodyHutIndex);
+    local bIsCamp:boolean = (improvement == g_iCampIndex);
+    local bIsHut:boolean = (improvement == g_iHutIndex);
     if not bIsHut then return; end
-    print("ImprovementActivated ", x, y, player, unit, improvement, owner, activation);
+    print(x, y, player, unit, improvement, owner, activation);
     return;
 end
 
@@ -471,154 +516,61 @@ end
 	configure required components
 =========================================================================== ]]
 function HostileVillagers_Initialize() 
-    print(string.format("Configuring members for %s . . .", g_sRuleset));
-    HostileVillagers = HostileVillagers();
-    print("Exposing members . . .");
-    ExposedMembers.HostileVillagers = HostileVillagers;
-    print("Configuring ingame Event listeners . . .");
+    print("Validating Hostile 'Reward' hash lookup table . . .");
+    for row in GameInfo.GoodyHutSubTypes() do 
+        if (row.GoodyHut == "GOODYHUT_HOSTILES") then 
+            local subtype:string = row.SubTypeGoodyHut;
+            local hash:number = DB.MakeHash(subtype);
+            vprint(string.format("[%d] =", hash), subtype, HostileRewards[hash]);
+        end
+    end
+    print("Validating Hostile Unit lookup table . . .");
+    for row in GameInfo.HostileVillagerUnits() do 
+        local class:string = row.PromotionClass;
+        local era:number = GameInfo.Eras[row.EraType].Index;
+        local kUnit:table = HostileVillagers[class][era];
+        vprint(string.format("[%s][%d] = {%s, %d, %d}", class, era, kUnit.UnitType, kUnit.Tech, kUnit.Resource));
+    end
+    print("Configuring Hostile Unit Naval Conversion table . . .");
+    for row in GameInfo.HostileNavalConversion() do 
+        g_kNavalConversion[row.PromotionClass] = row.NewPromotionClass;
+        vprint(string.format("[%s] --> %s", row.PromotionClass, row.NewPromotionClass));
+    end
+    print("Configuring Hostile Unit Fallback Class table . . .");
+    for row in GameInfo.HostileUnitFallback() do 
+        g_kFallbackClasses[row.PromotionClass] = row.NewPromotionClass;
+        vprint(string.format("[%s] --> %s", row.PromotionClass, row.NewPromotionClass));
+    end
+    local i:number = 0;
+    print("Configuring Strategic Resource lookup table . . .");
+    for row in GameInfo.Resources() do 
+        if row.ResourceClassType == "RESOURCECLASS_STRATEGIC" then 
+            i = #g_kStrategicResources + 1;
+            g_kStrategicResources[i] = row.Index;
+            vprint(string.format("[%d] = %s (%d)", i, row.ResourceType, row.Index));
+        end
+    end
+    -- print(g_sRowOfDashes);
+    g_kGoodyHuts = GetPlotsWithGoodyHut();
+    local numHuts:number = #g_kGoodyHuts;
+    print(string.format("Identified %d Tribal Village%s at startup", numHuts, (numHuts ~= 1) and "s" or ""));
+    for i, pPlot in ipairs(g_kGoodyHuts) do 
+        g_kGoodyPlots[pPlot] = GetAdjacentPlotData(pPlot, i, 3);
+    end
+    -- print(g_sRowOfDashes);
+    print("Configuring listener for Events.GoodyHutReward . . .");
     Events.GoodyHutReward.Add(HostileVillagers_OnGoodyHutReward);
-    Events.ImprovementActivated.Add(HostileVillagers_OnImprovementActivated);
-    -- print("Clearing temporary variables . . .");
-    -- g_sNotification = nil;
-    -- g_sRowOfDashes = nil;
-    -- g_sRuleset = nil;
-    -- g_bIsNotStandard = nil;
-    -- g_bNoBarbarians = nil;
-    -- g_bNoGoodyHuts = nil;
-    -- g_iBarbarianID = nil;
-    -- g_iBarbCampIndex = nil;
-    -- g_iGoodyHutIndex = nil;
+    -- Events.ImprovementActivated.Add(HostileVillagers_OnImprovementActivated);
     print("Initialization complete");
-    return;
+    -- return;
 end
 
 --[[ =========================================================================
 	defer execution of Initialize() to LoadScreenClose
 =========================================================================== ]]
-print("Deferring further configuration to LoadScreenClose");
+print(string.format("Deferring additional configuration for %s to LoadScreenClose", g_sRuleset));
 Events.LoadScreenClose.Add(HostileVillagers_Initialize);
 
 --[[ =========================================================================
 	End HostileVillagers.lua gameplay script
 =========================================================================== ]]
-
---[[ =========================================================================
-	function 
-=========================================================================== ]]
--- function GetNumPlotsWithResource( plots:table, i:number ) 
---     local numPlots:number = 0;
---     for _, pPlot in ipairs(plots) do 
---         if (pPlot:GetResourceType() == i) then 
---             numPlots = numPlots + 1;
---         end
---     end
---     return numPlots;
--- end
-
---[[ =========================================================================
-	function 
-=========================================================================== ]]
--- function GetValidPlotsForImprovement( plots:table, i:number ) 
---     local bHasNoUnits:boolean = false;
---     local bHasNoResources:boolean = false;
---     local bIsUnimproved:boolean = false;
---     local bIsVacant:boolean = false;
---     local p:number = 0;
---     local valid:table = {};
---     for _, pPlot in ipairs(plots) do 
---         if (pPlot:GetOwner() == -1) then 
---             bHasNoUnits = (#Units.GetUnitsInPlot(pPlot) == 0);
---             bHasNoResources = (pPlot:GetResourceType() == -1);
---             bIsUnimproved = (pPlot:GetImprovementType() == -1);
---             bIsVacant = (bHasNoUnits and bHasNoResources and bIsUnimproved);
---             if (bIsVacant and ImprovementBuilder.CanHaveImprovement(pPlot, i, -1)) then 
---                 p = #valid + 1;
---                 valid[p] = pPlot;
---             end
---         end
---     end
---     return valid;
--- end
-
---[[ =========================================================================
-	function 
-=========================================================================== ]]
--- function GetValidPlotsForUnit( plots:table ) 
---     local p:number = 0;
---     local land:table = {};
---     local water:table = {};
---     for _, pPlot in ipairs(plots) do 
---         if (#Units.GetUnitsInPlot(pPlot) == 0) then 
---             if not pPlot:IsWater() then 
---                 p = #land + 1;
---                 land[p] = pPlot;
---             elseif pPlot:IsWater() then 
---                 p = #water + 1;
---                 water[p] = pPlot;
---             end
---         end
---     end
---     return land, water;
--- end
-
---[[ =========================================================================
-	function IsResourceInNearbyPlot() 
-    finds a Resource in Map plots near a target plot
-    arguments:
-        i is the Index of a Resource in GameInfo.Resources[]
-        x and y are the Map coordinates of a target plot
-        r is the maximum distance from the target plot of plots to search
-    returns:
-        true when i is found in any plot within r plots of the target plot, or 
-        false otherwise
-=========================================================================== ]]
--- function IsResourceInNearbyPlot( i:number, x:number, y:number, r:number ) 
---     r = (r > 1) and r or 1;
---     local pPlot:object = nil;
---     for dX = (r * -1), r do 
---         for dY = (r * -1), r do 
---             pPlot = Map.GetPlotXYWithRangeCheck(x, y, dX, dY, r);
---             if (pPlot and pPlot:GetResourceType() == i) then 
---                 return true;
---             end
---         end
---     end
---     return false;
--- end
-
---[[ =========================================================================
-	function GetEligibleUnit() 
-    identifies the most advanced Unit of a given Promotion Class that Barbarian Tech and nearby Resources can produce
-    arguments:
-        kUnits is a table of relevant Unit data for one Promotion Class
-        era is the current Game or Player Era, and is used to index kUnits
-        x and y are the Map coordinates of a target plot
-    returns:
-        a valid UnitType if one is identified, or 
-        nil when a valid UnitType is NOT identified
-=========================================================================== ]]
--- function GetEligibleUnit( kUnits:table, era:number, x:number, y:number ) 
---     local barb:number = HostileVillagers.iBarbarianID;
---     local pPlayer:object = Players[barb];
---     local pPlayerTechs:object = pPlayer:GetTechs();
---     local resources:table = {};
---     for e = era, 0, -1 do 
---         local kUnit:table = kUnits[e];
---         local unitType:string = kUnit.UnitType;
---         local t:number = kUnit.Tech;
---         local r:number = kUnit.Resource;
---         if (t == -1) then 
---             return unitType;
---         elseif pPlayerTechs:HasTech(t) then 
---             if (r == -1) then 
---                 return unitType;
---             else 
---                 resources[r] = resources[r] or IsResourceInNearbyPlot(r, x, y, 3);
---                 if resources[r] then 
---                     return unitType;
---                 end
---             end
---         end
---     end
---     return nil;
--- end

@@ -16,6 +16,9 @@ UPDATE GlobalParameters SET Value = 5 WHERE Name = 'EXPERIENCE_MAX_BARB_LEVEL';
 UPDATE GlobalParameters SET Value = 3 WHERE Name = 'EXPERIENCE_ACTIVATE_GOODY_HUT';
 
 -- 
+UPDATE Improvements SET MovementChange = 3 WHERE ImprovementType = 'IMPROVEMENT_GOODY_HUT';
+
+-- 
 REPLACE INTO Types
     (Type, Kind)
 VALUES

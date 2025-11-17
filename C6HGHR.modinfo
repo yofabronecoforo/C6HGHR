@@ -76,6 +76,14 @@
     </FrontEndActions>
     <InGameActions>
         <!--  -->
+        <UpdateDatabase id="HGHR_GAMEPLAY_DATABASE" criteria="HGHR">
+            <!-- this needs to load RFL -->
+            <Properties>
+                <LoadOrder>2000010</LoadOrder>
+            </Properties>
+            <File>Gameplay/Ingame.sql</File>
+        </UpdateDatabase>
+        <!--  -->
         <AddGameplayScripts id="HGHR_GAMEPLAY_SCRIPT_HOSTILEVILLAGERS" criteria="HGHR">
             <!-- this needs to load RFL -->
             <Properties>
@@ -85,6 +93,7 @@
         </AddGameplayScripts>
     </InGameActions>
     <Files>
+        <File>Gameplay/Ingame.sql</File>
         <File>Scripts/HostileVillagers.lua</File>
     </Files>
 </Mod>

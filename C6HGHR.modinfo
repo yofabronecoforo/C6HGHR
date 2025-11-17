@@ -1,0 +1,94 @@
+<!-- =========================================================================
+    Hostile Goody Hut Rewards (HGHR) for Civilization VI
+    Copyright © 2020-2025 yofabronecoforo
+    All rights reserved.
+
+    BEGIN: C6HGHR.modinfo
+========================================================================== -->
+
+<?xml version="1.0" encoding="utf-8"?>
+<!-- increment version element here when changes will break existing saves -->
+<Mod id="eccf6466-03f4-46de-96ba-98fcd1e10b90" version="1">
+    <Properties>
+        <Name>LOC_HGHR_MOD_TITLE</Name>
+        <!-- actual version number reported ingame by ECFE -->
+        <Version>6.0.1.0</Version>
+        <Teaser>LOC_HGHR_MOD_TEASER</Teaser>
+        <Description>LOC_HGHR_MOD_DESCRIPTION</Description>
+        <Authors>LOC_HGHR_MOD_AUTHORS</Authors>
+        <SpecialThanks>LOC_HGHR_MOD_SPECIALTHANKS</SpecialThanks>
+        <Stability>Beta</Stability>
+        <CompatibleVersions>2.0</CompatibleVersions>
+    </Properties>
+    <LocalizedText>
+        <Text id="LOC_HGHR_MOD_TITLE">
+            <en_US>Hostile Goody Hut Rewards</en_US>
+        </Text>
+        <Text id="LOC_HGHR_MOD_TEASER">
+            <en_US>The villagers are hostile!</en_US>
+        </Text>
+        <Text id="LOC_HGHR_MOD_DESCRIPTION">
+            <en_US>Introduces new Tribal Village rewards in single- and multi-player games. Unlike typical rewards, these [COLOR_Red]rewards[ENDCOLOR] produce one or more hostile (Barbarian) units near the Tribal Village's former location.[NEWLINE][NEWLINE]Introduces the possibility of hostile units appearing following any other non-hostile reward.[NEWLINE][NEWLINE]Hostile villager properties can be configured prior to game creation via new and existing Advanced Setup (SP) and Host Game (MP) options.</en_US>
+        </Text>
+        <Text id="LOC_HGHR_MOD_AUTHORS">
+            <en_US>Copyright © 2020-2025 yofabronecoforo. All rights reserved.</en_US>
+        </Text>
+        <Text id="LOC_HGHR_MOD_SPECIALTHANKS">
+            <en_US>The Community</en_US>
+        </Text>
+    </LocalizedText>
+    <References>
+        <Mod id="1B28771A-C749-434B-9053-D1380C553DE9" title="LOC_EXPANSION1_MOD_TITLE"/>
+        <Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="LOC_EXPANSION2_MOD_TITLE"/>
+        <Mod id="9DE86512-DE1A-400D-8C0A-AB46EBBF76B9" title="LOC_GRANCOLOMBIA_MAYA_MOD_TITLE"/>
+        <Mod id="29dfeca5-042a-4259-853d-61f554851af7" title="Enhanced Community FrontEnd"/>
+        <Mod id="ed183371-82ee-488f-8e8d-53d5c48082d0" title="LOC_EGHS_MOD_TITLE"/>
+    </References>
+    <Dependencies>
+    </Dependencies>
+    <ActionCriteria>
+        <!-- all rulesets -->
+        <Criteria id="HGHR" any="1">
+            <RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
+        </Criteria>
+        <!-- standard ruleset only -->
+        <Criteria id="HGHR_Base">
+            <RuleSetInUse>RULESET_STANDARD</RuleSetInUse>
+        </Criteria>
+        <!-- rise and fall ruleset only -->
+        <Criteria id="HGHR_Expansion1">
+            <RuleSetInUse>RULESET_EXPANSION_1</RuleSetInUse>
+        </Criteria>
+        <!-- any expansion ruleset -->
+        <Criteria id="HGHR_Expansion1AndBeyond" any="1">
+            <RuleSetInUse>RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
+        </Criteria>
+        <!-- gathering storm ruleset only -->
+        <Criteria id="HGHR_Expansion2">
+            <RuleSetInUse>RULESET_EXPANSION_2</RuleSetInUse>
+        </Criteria>
+        <!-- Gran Colombia and Maya DLC present -->
+        <Criteria id="HGHR_GranColombia_Maya">
+            <ModInUse>9DE86512-DE1A-400D-8C0A-AB46EBBF76B9</ModInUse>
+        </Criteria>
+    </ActionCriteria>
+    <FrontEndActions>
+    </FrontEndActions>
+    <InGameActions>
+        <!--  -->
+        <AddGameplayScripts id="HGHR_GAMEPLAY_SCRIPT_HOSTILEVILLAGERS" criteria="HGHR">
+            <!-- this needs to load RFL -->
+            <Properties>
+                <LoadOrder>2000091</LoadOrder>
+            </Properties>
+            <File>Scripts/HostileVillagers.lua</File>
+        </AddGameplayScripts>
+    </InGameActions>
+    <Files>
+        <File>Scripts/HostileVillagers.lua</File>
+    </Files>
+</Mod>
+
+<!-- =========================================================================
+    END: C6HGHR.modinfo
+========================================================================== -->

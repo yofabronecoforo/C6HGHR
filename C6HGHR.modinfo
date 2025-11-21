@@ -76,6 +76,14 @@
     </FrontEndActions>
     <InGameActions>
         <!--  -->
+        <UpdateDatabase id="HGHR_GAMEPLAY_SCHEMA" criteria="HGHR">
+            <!-- this needs to load RFE -->
+            <Properties>
+                <LoadOrder>-52</LoadOrder>
+            </Properties>
+            <File>Gameplay/Schema.sql</File>
+        </UpdateDatabase>
+        <!--  -->
         <UpdateDatabase id="HGHR_GAMEPLAY_DATABASE" criteria="HGHR">
             <!-- this needs to load RFL -->
             <Properties>
@@ -94,6 +102,7 @@
     </InGameActions>
     <Files>
         <File>Gameplay/Ingame.sql</File>
+        <File>Gameplay/Schema.sql</File>
         <File>Scripts/HostileVillagers.lua</File>
     </Files>
 </Mod>

@@ -6,6 +6,9 @@
     Begin ingame setup
 =========================================================================== */
 
+-- *** REMOVE THIS FROM FINAL *** update Goody Hut frequency; default: TilesPerGoody = 128, GoodyRange = 3
+UPDATE Improvements SET TilesPerGoody = 16, GoodyRange = 0 WHERE ImprovementType = 'IMPROVEMENT_GOODY_HUT';
+
 -- goody hut subtype Kind; enables automatic hash generation in GameInfo
 REPLACE INTO Kinds 
     (Kind) 
